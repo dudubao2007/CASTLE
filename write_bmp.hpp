@@ -50,17 +50,17 @@ private:
 	}
 
 public:
-    BMPFile(Dword height, Dword width, Byte bpp, Dword *colormap=NULL):
+		BMPFile(Dword height, Dword width, Byte bpp, Dword *colormap=NULL):
 		header_size(54),
 		colormap_size(colormap ? 1u << (bpp+2) : 0),
 		img_size(((((bpp*(Ull)width) + 31) >> 5) << 2) * height),
 		buf_size(header_size + colormap_size + img_size),
-        header(), colormap(colormap), buf(new Byte[buf_size]), ptr(buf)
+		header(), colormap(colormap), buf(new Byte[buf_size]), ptr(buf)
 	{
 		// bmp header
 		header.type[0] = 'B';
 		header.type[1] = 'M';
-        header.file_size = buf_size;
+		header.file_size = buf_size;
 		header.reserved1 = 0;
 		header.reserved2 = 0;
 		header.offbits = header_size + colormap_size;
@@ -83,12 +83,12 @@ public:
 		delete[] buf;
 	}
 
-    Dword write(Byte *img, Dword *colormap = NULL) {
+	Dword write(Byte *img, Dword *colormap = NULL) {
 		// file header
 		write_bits(header.type[0]);
 		write_bits(header.type[1]);
 
-        write_bits(header.file_size);
+		write_bits(header.file_size);
 		write_bits(header.reserved1);
 		write_bits(header.reserved2);
 		write_bits(header.offbits);
@@ -106,18 +106,18 @@ public:
 		write_bits(header.color_used);
 		write_bits(header.color_important);
 
-        // colormap
+		// colormap
 		Byte bpp = header.bit_count;
-        if (colormap) {
-            Dword color_count = (1u << bpp);
-            for (Dword i = 0; i < color_count; ++i)
-                write_bits(colormap[i]);
-        }
+		if (colormap) {
+			Dword color_count = (1u << bpp);
+			for (Dword i = 0; i < color_count; ++i)
+				write_bits(colormap[i]);
+		}
 
-        // img
+		// img
 		Dword line_count = header.width * (bpp >> 3u);
-        Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
-        for (Dword i = 0; i < header.height; ++i) {
+		Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
+		for (Dword i = 0; i < header.height; ++i) {
 			// 从 img 数组拷贝 line_count 个字节
 			memcpy(ptr, img, line_count);
 			img += line_count;
@@ -125,20 +125,20 @@ public:
 			// 用零填充 zero_count 个字节
 			memset(ptr, 0, zero_count);
 			ptr += zero_count;
-        }
-        return buf_size;
-    }
+		}
+		return buf_size;
+	}
 
-    int output(const char *filename) {
-        FILE *fp = fopen(filename, "wb");
-        if (!fp) {
+	int output(const char *filename) {
+		FILE *fp = fopen(filename, "wb");
+		if (!fp) {
 			perror("failed to open file");
 			return -1;
 		}
-        fwrite(buf, sizeof(Byte), buf_size, fp);
-        fclose(fp);
-        return 0;
-    }
+		fwrite(buf, sizeof(Byte), buf_size, fp);
+		fclose(fp);
+		return 0;
+	}
 };
 
 #endif // WRITE_BMP_H
