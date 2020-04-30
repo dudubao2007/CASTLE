@@ -1,5 +1,5 @@
 #pragma GCC optimize(2)
-#include "bmp.h"
+#include "bmp_old.h"
 using namespace std;
 uint ColorMap[256] = {16777215, 255};
 const uint N = 1020;

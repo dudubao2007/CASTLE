@@ -1,5 +1,5 @@
 #pragma GCC optimize(2)
-#include "bmp.h"
+#include "bmp_old.h"
 using namespace std;
 const uint Height = 4096;
 const uint Width = 4096;

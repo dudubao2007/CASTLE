@@ -1,5 +1,5 @@
-#ifndef BMP_H
-#define BMP_H
+#ifndef BMP_HPP
+#define BMP_HPP
 
 #include <bits/stdc++.h>
 
@@ -7,13 +7,24 @@ typedef unsigned char Byte;
 typedef unsigned short Word;
 typedef unsigned int Dword;
 
+struct Color {
+	Byte r, g, b;
+};
+
 class BMPFile {
 
 	// 一个 bmp 文件由 header, colormap (可选), img 三部分组成
-	Dword header_size;
+	const Dword header_size;
 	Dword colormap_size;
 	Dword img_size;
-	Dword buf_size; // 等于以上三者之和
+
+	bool new_colormap;
+	bool new_img;
+
+	Dword *colormap;
+	Byte *img;
+
+public:
 	struct {
 		// bmp header: 14 - 2 = 12 bytes
 		//Byte type[2]; 去掉这一字段, 方便字节对齐
@@ -35,19 +46,16 @@ class BMPFile {
 		Dword color_used;
 		Dword color_important;
 	} header;
-	Dword *colormap;
-	Byte *buf; // 图像文件缓冲区
 
-public:
-	BMPFile(Dword height, Dword width, Byte bpp, Dword *colormap=NULL):
+	BMPFile(Byte *img, Dword height, Dword width, Byte bpp=24, Dword *colormap=NULL): // bpp: bit per pixel
 		header_size(sizeof(header)+2),
-		colormap_size(colormap ? 1u << (bpp+2) : 0),
+		colormap_size(colormap ? 1 << (bpp+2) : 0),
 		img_size((((bpp*width + 31) >> 5) << 2) * height),
-		buf_size(header_size + colormap_size + img_size),
-		header(), colormap(colormap), buf(new Byte[buf_size])
+		new_colormap(false), new_img(false),
+		colormap(colormap), img(img)
 	{
 		// bmp header
-		header.file_size = buf_size;
+		header.file_size = header_size + colormap_size + img_size;
 		header.reserved1 = 0;
 		header.reserved2 = 0;
 		header.offbits = header_size + colormap_size;
@@ -57,7 +65,7 @@ public:
 		header.width = width;
 		header.height = height;
 		header.planes = 1;
-		header.bit_count = bpp; // bpp: bit per pixel
+		header.bit_count = bpp;
 		header.compression = 0;
 		header.img_size = img_size;
 		header.resolutionX = 0;
@@ -67,14 +75,16 @@ public:
 	}
 
 	BMPFile(const char *filename):
-		header_size(sizeof(header)+2), colormap(NULL)
+		header_size(sizeof(header)+2),
+		new_colormap(false), new_img(false),
+		colormap(NULL), img(NULL)
 	{
 		FILE *fp = fopen(filename, "r");
 		if (!fp) {
 			perror(filename);
 			return;
 		}
-		
+
 		// type
 		char type[2];
 		fread(type, sizeof(Byte), 2, fp);
@@ -87,92 +97,110 @@ public:
 		fread(&header, sizeof(Byte), sizeof(header), fp);
 		colormap_size = header.offbits - header_size;
 		img_size = header.img_size;
-		buf_size = header.file_size;
 
-		// colormap + img
-		buf = new Byte[buf_size];
-		if (buf == NULL) {
-			std::cerr << "BMPfile: failed to allocate memory\n";
-			return;
+		// colormap
+		if (colormap_size) {
+			Dword count = colormap_size / sizeof(Dword);
+			colormap = new Dword[count];
+			if (colormap == NULL) {
+				std::cerr << "BMPfile: failed to allocate memory for colormap\n";
+				return;
+			}
+			new_colormap = true;
+			fread(colormap, sizeof(Dword), count, fp);
 		}
-		memcpy(buf, type, 2);
-		memcpy(buf+2, &header, sizeof(header));
-		fread(buf+header_size, sizeof(Byte), buf_size - header_size, fp);
+
+		// img
+		if (img_size) {
+			img = new Byte[img_size];
+			if (img == NULL) {
+				std::cerr << "BMPfile: failed to allocate memory for img\n";
+				return;
+			}
+			new_img = true;
+			fread(img, sizeof(Byte), img_size, fp);
+
+			// 将数据在内存中移动, 消除空白字节
+			Byte bpp = header.bit_count;
+			Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
+			if (zero_count) {
+				Dword line_count = header.width * (bpp >> 3);
+				Dword count = line_count + zero_count;
+				for (Byte *r = img + count, *w = img + line_count;
+						r < img + img_size;
+						r += count, w += line_count) {
+					memmove(w, r, line_count);
+				}
+			}
+		}
 
 		fclose(fp);
 	}
 
 	~BMPFile() {
-		if (buf)
-			delete[] buf;
-		buf = NULL;
+		if (new_colormap)
+			delete[] colormap;
+		if (new_img)
+			delete[] img;
 	}
 
-	void info() {
-		std::cout << "file_size: " << header.file_size
-			<< "\nreserved1: " << header.reserved1
-			<< "\nreserved2: " << header.reserved2
-			<< "\noffbits: " << header.offbits
-			<< "\ninfo_size: " << header.info_size
-			<< "\nwidth: " << header.width
-			<< "\nheight: " << header.height
-			<< "\nplanes: " << header.planes
-			<< "\nbit_count: " << header.bit_count
-			<< "\ncompression: " << header.compression
-			<< "\nimg_size: " << header.img_size
-			<< "\nresolutionX: " << header.resolutionX
-			<< "\nresolutionY: " << header.resolutionY
-			<< "\ncolor_used: " << header.color_used
-			<< "\ncolor_important: " << header.color_important
-			<< "\n"; 
-	}
-
-	Dword write(Byte *img, Dword *colormap = NULL) {
-
-		Byte *ptr = buf;
-
-		// header
-		buf[0] = 'B';
-		buf[1] = 'M';
-		ptr += 2;
-		memcpy(ptr, &header, sizeof(header));
-		ptr += sizeof(header);
-
-		// colormap
-		Byte bpp = header.bit_count;
-		if (colormap) {
-			Dword size = (1u << bpp) * sizeof(Dword);
-			memcpy(ptr, colormap, size);
-			ptr += size;
-		}
-
-		// img
-		if (img) {
-			Dword line_count = header.width * (bpp >> 3u);
-			Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
-			for (Dword i = 0; i < header.height; ++i) {
-				// 从 img 数组拷贝 line_count 个字节
-				memcpy(ptr, img, line_count);
-				img += line_count;
-				ptr += line_count;
-				// 用零填充 zero_count 个字节
-				memset(ptr, 0, zero_count);
-				ptr += zero_count;
-			}
-		}
-		return buf_size;
-	}
-
-	int output(const char *filename) {
+	int output(const char *filename) const {
 		FILE *fp = fopen(filename, "wb");
 		if (!fp) {
 			perror(filename);
 			return -1;
 		}
-		fwrite(buf, sizeof(Byte), buf_size, fp);
+
+		Byte *buf = new Byte[header.file_size];
+		Byte *w = buf;
+
+		// header
+		buf[0] = 'B';
+		buf[1] = 'M';
+		w += 2;
+		memcpy(w, &header, sizeof(header));
+		w += sizeof(header);
+
+		// colormap
+		Byte bpp = header.bit_count;
+		if (colormap) {
+			memcpy(w, colormap, colormap_size);
+			w += colormap_size;
+		}
+
+		// img
+		if (img) {
+			Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
+			Dword line_count = header.width * (bpp >> 3);
+			Byte *r = img;
+			for (Dword i = 0; i < header.height; ++i) {
+				// 从 img 数组拷贝 line_count 个字节
+				memcpy(w, r, line_count);
+				r += line_count;
+				w += line_count;
+				// 用零填充 zero_count 个字节
+				memset(w, 0, zero_count);
+				w += zero_count;
+			}
+		}
+		fwrite(buf, sizeof(Byte), header.file_size, fp);
 		fclose(fp);
+		delete[] buf;
 		return 0;
 	}
+
+	Color get(Dword row, Dword col) const {
+		Dword idx = (row * header.width + col) * 3;
+		return Color{img[idx], img[idx+1], img[idx+2]};
+	}
+
+	void set(Dword row, Dword col, const Color &color) {
+		Dword idx = (row * header.width + col) * 3;
+		img[idx] = color.r;
+		img[idx+1] = color.g;
+		img[idx+2] = color.b;
+	}
+
 };
 
-#endif // BMP_H
+#endif // BMP_HPP
