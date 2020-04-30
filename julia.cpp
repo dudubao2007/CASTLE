@@ -1,5 +1,5 @@
 #pragma GCC optimize(2)
-#include "bmp.h"
+#include "bmp_old.h"
 using namespace std;
 typedef complex<double> Comp;
 const uint Height = 4096;

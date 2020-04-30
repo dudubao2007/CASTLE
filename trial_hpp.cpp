@@ -1,4 +1,4 @@
-#include "bmp.hpp"
+#include "bmp_old.hpp"
 
 const Dword Height = 4096u;
 const Dword Width = 4096u;
