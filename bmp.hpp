@@ -1,11 +1,10 @@
 #ifndef BMP_HPP
 #define BMP_HPP
 
-#include <bits/stdc++.h>
-
-typedef unsigned char Byte;
-typedef unsigned short Word;
-typedef unsigned int Dword;
+#include "global_define.hpp"
+#include <cstdio>
+#include <cstring>
+#include <iostream>
 
 struct Color {
 	Byte r, g, b;
@@ -27,7 +26,7 @@ class BMPFile {
 public:
 	struct {
 		// bmp header: 14 - 2 = 12 bytes
-		//Byte type[2]; 去掉这一字段, 方便字节对齐
+		// Byte type[2]; 去掉这一字段, 方便字节对齐
 		Dword file_size;
 		Word reserved1;
 		Word reserved2;
@@ -47,13 +46,16 @@ public:
 		Dword color_important;
 	} header;
 
-	BMPFile(Byte *img, Dword height, Dword width, Byte bpp=24, Dword *colormap=NULL): // bpp: bit per pixel
-		header_size(sizeof(header)+2),
-		colormap_size(colormap ? 1 << (bpp+2) : 0),
-		img_size((((bpp*width + 31) >> 5) << 2) * height),
-		new_colormap(false), new_img(false),
-		colormap(colormap), img(img)
-	{
+	BMPFile(Byte *img, Dword height, Dword width, Byte bpp = 24,
+		Dword *colormap = NULL)
+		: // bpp: bit per pixel
+		header_size(sizeof(header) + 2)
+		, colormap_size(colormap ? 1 << (bpp + 2) : 0)
+		, img_size((((bpp * width + 31) >> 5) << 2) * height)
+		, new_colormap(false)
+		, new_img(false)
+		, colormap(colormap)
+		, img(img) {
 		// bmp header
 		header.file_size = header_size + colormap_size + img_size;
 		header.reserved1 = 0;
@@ -74,11 +76,12 @@ public:
 		header.color_important = 0;
 	}
 
-	BMPFile(const char *filename):
-		header_size(sizeof(header)+2),
-		new_colormap(false), new_img(false),
-		colormap(NULL), img(NULL)
-	{
+	BMPFile(const char *filename)
+		: header_size(sizeof(header) + 2)
+		, new_colormap(false)
+		, new_img(false)
+		, colormap(NULL)
+		, img(NULL) {
 		FILE *fp = fopen(filename, "rb");
 		if (!fp) {
 			perror(filename);
@@ -103,7 +106,8 @@ public:
 			Dword count = colormap_size / sizeof(Dword);
 			colormap = new Dword[count];
 			if (colormap == NULL) {
-				std::cerr << "BMPfile: failed to allocate memory for colormap\n";
+				std::cerr
+					<< "BMPfile: failed to allocate memory for colormap\n";
 				return;
 			}
 			new_colormap = true;
@@ -127,8 +131,7 @@ public:
 				Dword line_count = header.width * (bpp >> 3);
 				Dword count = line_count + zero_count;
 				for (Byte *r = img + count, *w = img + line_count;
-						r < img + img_size;
-						r += count, w += line_count) {
+					 r < img + img_size; r += count, w += line_count) {
 					memmove(w, r, line_count);
 				}
 			}
@@ -191,16 +194,15 @@ public:
 
 	Color get(Dword row, Dword col) const {
 		Dword idx = (row * header.width + col) * 3;
-		return Color{img[idx], img[idx+1], img[idx+2]};
+		return Color {img[idx], img[idx + 1], img[idx + 2]};
 	}
 
 	void set(Dword row, Dword col, const Color &color) {
 		Dword idx = (row * header.width + col) * 3;
 		img[idx] = color.r;
-		img[idx+1] = color.g;
-		img[idx+2] = color.b;
+		img[idx + 1] = color.g;
+		img[idx + 2] = color.b;
 	}
-
 };
 
 #endif // BMP_HPP
