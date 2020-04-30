@@ -1,6 +1,5 @@
 #pragma GCC optimize(2)
-#include <bits/stdc++.h>
-#include "write_bmp.h"
+#include "bmp.h"
 using namespace std;
 typedef complex<double> Comp;
 const uint Height = 4096;
