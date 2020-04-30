@@ -79,7 +79,7 @@ public:
 		new_colormap(false), new_img(false),
 		colormap(NULL), img(NULL)
 	{
-		FILE *fp = fopen(filename, "r");
+		FILE *fp = fopen(filename, "rb");
 		if (!fp) {
 			perror(filename);
 			return;
