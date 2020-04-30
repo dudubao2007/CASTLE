@@ -1,6 +1,5 @@
 #pragma GCC optimize(2)
-#include <bits/stdc++.h>
-#include "write_bmp.h"
+#include "bmp.h"
 using namespace std;
 uint ColorMap[256] = {16777215, 255};
 const uint N = 1020;

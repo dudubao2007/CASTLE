@@ -1,6 +1,5 @@
 #pragma GCC optimize(2)
-#include <bits/stdc++.h>
-#include "write_bmp.h"
+#include "bmp.h"
 using namespace std;
 const uint Height = 1500;
 const uint Width = 1500;
