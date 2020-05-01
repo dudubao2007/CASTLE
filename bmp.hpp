@@ -6,10 +6,6 @@
 #include <cstring>
 #include <iostream>
 
-struct Color {
-	Byte r, g, b;
-};
-
 class BMPFile {
 
 	// 一个 bmp 文件由 header, colormap (可选), img 三部分组成

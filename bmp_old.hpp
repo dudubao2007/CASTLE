@@ -16,7 +16,7 @@ class BMPFile {
 	Dword buf_size; // 等于以上三者之和
 	struct {
 		// bmp header: 14 - 2 = 12 bytes
-		//Byte type[2]; 去掉这一字段, 方便字节对齐
+		// Byte type[2]; 去掉这一字段, 方便字节对齐
 		Dword file_size;
 		Word reserved1;
 		Word reserved2;
@@ -39,13 +39,14 @@ class BMPFile {
 	Byte *buf; // 图像文件缓冲区
 
 public:
-	BMPFile(Dword height, Dword width, Byte bpp, Dword *colormap=NULL):
-		header_size(sizeof(header)+2),
-		colormap_size(colormap ? 1u << (bpp+2) : 0),
-		img_size((((bpp*width + 31) >> 5) << 2) * height),
-		buf_size(header_size + colormap_size + img_size),
-		header(), colormap(colormap), buf(new Byte[buf_size])
-	{
+	BMPFile(Dword height, Dword width, Byte bpp, Dword *colormap = NULL)
+		: header_size(sizeof(header) + 2)
+		, colormap_size(colormap ? 1u << (bpp + 2) : 0)
+		, img_size((((bpp * width + 31) >> 5) << 2) * height)
+		, buf_size(header_size + colormap_size + img_size)
+		, header()
+		, colormap(colormap)
+		, buf(new Byte[buf_size]) {
 		// bmp header
 		header.file_size = buf_size;
 		header.reserved1 = 0;
@@ -66,15 +67,15 @@ public:
 		header.color_important = 0;
 	}
 
-	BMPFile(const char *filename):
-		header_size(sizeof(header)+2), colormap(NULL)
-	{
+	BMPFile(const char *filename)
+		: header_size(sizeof(header) + 2)
+		, colormap(NULL) {
 		FILE *fp = fopen(filename, "r");
 		if (!fp) {
 			perror(filename);
 			return;
 		}
-		
+
 		// type
 		char type[2];
 		fread(type, sizeof(Byte), 2, fp);
@@ -96,8 +97,8 @@ public:
 			return;
 		}
 		memcpy(buf, type, 2);
-		memcpy(buf+2, &header, sizeof(header));
-		fread(buf+header_size, sizeof(Byte), buf_size - header_size, fp);
+		memcpy(buf + 2, &header, sizeof(header));
+		fread(buf + header_size, sizeof(Byte), buf_size - header_size, fp);
 
 		fclose(fp);
 	}
@@ -110,21 +111,20 @@ public:
 
 	void info() {
 		std::cout << "file_size: " << header.file_size
-			<< "\nreserved1: " << header.reserved1
-			<< "\nreserved2: " << header.reserved2
-			<< "\noffbits: " << header.offbits
-			<< "\ninfo_size: " << header.info_size
-			<< "\nwidth: " << header.width
-			<< "\nheight: " << header.height
-			<< "\nplanes: " << header.planes
-			<< "\nbit_count: " << header.bit_count
-			<< "\ncompression: " << header.compression
-			<< "\nimg_size: " << header.img_size
-			<< "\nresolutionX: " << header.resolutionX
-			<< "\nresolutionY: " << header.resolutionY
-			<< "\ncolor_used: " << header.color_used
-			<< "\ncolor_important: " << header.color_important
-			<< "\n"; 
+				  << "\nreserved1: " << header.reserved1
+				  << "\nreserved2: " << header.reserved2
+				  << "\noffbits: " << header.offbits
+				  << "\ninfo_size: " << header.info_size
+				  << "\nwidth: " << header.width
+				  << "\nheight: " << header.height
+				  << "\nplanes: " << header.planes
+				  << "\nbit_count: " << header.bit_count
+				  << "\ncompression: " << header.compression
+				  << "\nimg_size: " << header.img_size
+				  << "\nresolutionX: " << header.resolutionX
+				  << "\nresolutionY: " << header.resolutionY
+				  << "\ncolor_used: " << header.color_used
+				  << "\ncolor_important: " << header.color_important << "\n";
 	}
 
 	Dword write(Byte *img, Dword *colormap = NULL) {
