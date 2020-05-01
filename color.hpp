@@ -1,5 +1,8 @@
+#ifndef COLOR_HPP
+#define COLOR_HPP
 #include "array.hpp"
 #include "global_define.hpp"
+#include <cassert>
 struct Color {
 	Byte r, g, b;
 	Color() {}
@@ -84,3 +87,4 @@ public:
 		_a = _a * c.a();
 	}
 };
+#endif
