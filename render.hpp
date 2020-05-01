@@ -13,7 +13,6 @@ void render(BitMap<_height, _width> bitmap,
 	using namespace std;
 	Dword height = bitmap.height();
 	Dword width = bitmap.width();
-	assert(height % thread_num == 0);
 	vector<thread> thd_pool(thread_num);
 	auto f = [width, get_color, &bitmap](int s, int t) {
 		for (Dword i = s; i < t; ++i)
@@ -29,5 +28,6 @@ void render(BitMap<_height, _width> bitmap,
 		thd_pool[i] = thread(f, i * p, i * p + p);
 	for (Dword i = 0; i < thread_num; ++i)
 		thd_pool[i].join();
+	f(thread_num * p, width);
 }
 } // namespace Render
