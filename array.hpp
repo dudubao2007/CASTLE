@@ -1,3 +1,5 @@
+#ifndef ARRAY_HPP
+#define ARRAY_HPP
 #include "global_define.hpp"
 #include <cassert>
 #include <complex>
@@ -114,3 +116,4 @@ template <typename T> Array<T, 3> cross(Array<T, 3> a, Array<T, 3> b) {
 	return ans;
 }
 typedef Array<Float, 2> Coordinate;
+#endif
