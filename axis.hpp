@@ -1,3 +1,5 @@
+#ifndef AXIS_HPP
+#define AXIS_HPP
 #include "array.hpp"
 #include "const.hpp"
 #include "global_define.hpp"
@@ -36,3 +38,4 @@ public:
 	Float y_unit() { return u_y; }
 	Float unit() { return eq_u; }
 };
+#endif

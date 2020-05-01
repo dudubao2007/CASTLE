@@ -1,4 +1,5 @@
 #include "global_define.hpp"
+#include <cassert>
 #include <complex>
 template <typename T, Dword t> struct Array {
 	T a[t];
