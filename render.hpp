@@ -1,3 +1,4 @@
+#include "global_define.hpp"
 #include "picture.hpp"
 #include <cassert>
 #include <functional>
