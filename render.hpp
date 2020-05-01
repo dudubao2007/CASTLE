@@ -1,19 +1,19 @@
-#include "bitmap.hpp"
 #include "global_define.hpp"
+#include "picture.hpp"
 #include <cassert>
 #include <functional>
 #include <thread>
 #include <tuple>
 #include <vector>
 namespace Render {
-void render(BitMap bitmap,
+void render(BytePicture bitmap,
 	std::function<std::tuple<Byte, Byte, Byte>(Dword, Dword)> get_color,
 	Dword thread_num = 1) {
 	using namespace std;
 	Dword height = bitmap.height();
 	Dword width = bitmap.width();
 	vector<thread> thd_pool(thread_num);
-	auto f = [width, get_color, &bitmap](int s, int t) {
+	auto f = [width, get_color, &bitmap](Dword s, Dword t) {
 		for (Dword i = s; i < t; ++i)
 			for (Dword j = 0; j < width; ++j) {
 				auto t = get_color(i, j);
