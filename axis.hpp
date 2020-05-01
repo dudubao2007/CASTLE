@@ -20,13 +20,13 @@ public:
 		else
 			eq_u = Const::NaN;
 	}
-	Coordinate to_Point(Float x, Float y) {
+	Coordinate to_point(Float x, Float y) {
 		Coordinate ans;
 		ans[0] = (x - x_c) / u_x;
 		ans[1] = (y - y_c) / u_y;
 		return ans;
 	}
-	Coordinate to_Pixel(Float x, Float y) {
+	Coordinate to_pixel(Float x, Float y) {
 		Coordinate ans;
 		ans[0] = x_c + x * u_x;
 		ans[1] = y_c + y * u_y;
