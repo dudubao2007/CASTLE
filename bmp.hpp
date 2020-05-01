@@ -1,8 +1,9 @@
 #ifndef BMP_HPP
 #define BMP_HPP
 
-#include "global_define.hpp"
 #include "color.hpp"
+#include "global_define.hpp"
+#include "picture.hpp"
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -12,6 +13,7 @@
 //请注意
 
 class BMPFile {
+	typedef std::vector<Byte> Img;
 	// 一个 bmp 文件由 header, colormap (可选), img 三部分组成
 	const Dword header_size;
 	Dword colormap_size;
@@ -20,8 +22,15 @@ class BMPFile {
 	bool new_colormap;
 	bool new_img;
 
-	Dword *colormap;
-	Byte *img;
+	std::vector<Dword> colormap;
+	Img img;
+	Img to_img(BytePicture pic) {
+		Img res(pic.height() * pic.width() * 3);
+		for (Dword i = 0; i < pic.height(); i++)
+			for (Dword j = 0; j < pic.width(); j++)
+				std::fill(pic.data[i][j].begin(), pic.data[i][j].end(),
+					res.begin() + (i * pic.width() + j) * 3);
+	}
 
 public:
 	struct {
@@ -45,20 +54,20 @@ public:
 		Dword color_used;
 		Dword color_important;
 	} header;
-	/* BMPFile(BitMap bitmap, Byte bpp = 24,
-		Dword *colormap = nullptr) //委托构造函数
-		: BMPFile(bitmap.data, bitmap.height(), bitmap.width(), bpp, colormap) {
-	} */
-	BMPFile(Byte *_img, Dword height, Dword width, Byte bpp = 24,
-		Dword *_colormap = NULL)
+	BMPFile(BytePicture pic, Byte bpp = 24,
+		ColorMap _colormap = ColorMap()) //委托构造函数
+		: BMPFile(to_img(pic), pic.height(), pic.width(), bpp, colormap) {}
+
+	BMPFile(std::vector<Byte> _img, Dword height, Dword width, Byte bpp = 24,
+		ColorMap _colormap = ColorMap())
 		: // bpp: bit per pixel
 		header_size(sizeof(header) + 2)
-		, colormap_size(colormap ? 1 << (bpp + 2) : 0)
+		, colormap_size(colormap.size() ? 1 << (bpp + 2) : 0)
 		, img_size((((bpp * width + 31) >> 5) << 2) * height)
 		, new_colormap(false)
 		, new_img(false)
-		, colormap(nullptr)
-		, img(nullptr) {
+		, colormap(_colormap)
+		, img(_img) {
 		// bmp header
 		header.file_size = header_size + colormap_size + img_size;
 		header.reserved1 = 0;
@@ -77,20 +86,14 @@ public:
 		header.resolutionY = 0;
 		header.color_used = 0;
 		header.color_important = 0;
-
-		// copy img&&colormap
-		colormap = new Dword[colormap_size];
-		img = new Byte[img_size];
-		memcpy(colormap, _colormap, sizeof(Dword) * colormap_size);
-		memcpy(img, _img, sizeof(Byte) * img_size);
 	}
 
 	BMPFile(const char *filename)
 		: header_size(sizeof(header) + 2)
 		, new_colormap(false)
 		, new_img(false)
-		, colormap(nullptr)
-		, img(nullptr) {
+		, colormap(ColorMap())
+		, img(Img()) {
 		FILE *fp = fopen(filename, "rb");
 		if (!fp) {
 			perror(filename);
@@ -113,25 +116,27 @@ public:
 		// colormap
 		if (colormap_size) {
 			Dword count = colormap_size / sizeof(Dword);
-			colormap = new Dword[count];
-			if (colormap == NULL) {
+			try {
+				colormap.resize(count);
+			} catch (...) {
 				std::cerr
 					<< "BMPfile: failed to allocate memory for colormap\n";
 				return;
 			}
 			new_colormap = true;
-			fread(colormap, sizeof(Dword), count, fp);
+			fread(colormap.data(), sizeof(Dword), count, fp);
 		}
 
 		// img
 		if (img_size) {
-			img = new Byte[img_size];
-			if (img == NULL) {
+			try {
+				img.resize(img_size);
+			} catch (...) {
 				std::cerr << "BMPfile: failed to allocate memory for img\n";
 				return;
 			}
 			new_img = true;
-			fread(img, sizeof(Byte), img_size, fp);
+			fread(img.data(), sizeof(Byte), img_size, fp);
 
 			// 将数据在内存中移动, 消除空白字节
 			Byte bpp = header.bit_count;
@@ -139,8 +144,8 @@ public:
 			if (zero_count) {
 				Dword line_count = header.width * (bpp >> 3);
 				Dword count = line_count + zero_count;
-				for (Byte *r = img + count, *w = img + line_count;
-					 r < img + img_size; r += count, w += line_count) {
+				for (Byte *r = img.data() + count, *w = img.data() + line_count;
+					 r < img.data() + img_size; r += count, w += line_count) {
 					memmove(w, r, line_count);
 				}
 			}
@@ -149,12 +154,7 @@ public:
 		fclose(fp);
 	}
 
-	~BMPFile() {
-		if (new_colormap)
-			delete[] colormap;
-		if (new_img)
-			delete[] img;
-	}
+	~BMPFile() {}
 
 	int output(const char *filename) const {
 		FILE *fp = fopen(filename, "wb");
@@ -175,16 +175,16 @@ public:
 
 		// colormap
 		Byte bpp = header.bit_count;
-		if (colormap) {
-			memcpy(w, colormap, colormap_size);
+		if (colormap.size()) {
+			memcpy(w, colormap.data(), colormap_size);
 			w += colormap_size;
 		}
 
 		// img
-		if (img) {
+		if (img.size()) {
 			Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
 			Dword line_count = header.width * (bpp >> 3);
-			Byte *r = img;
+			Byte *r = const_cast<Byte *>(img.data());
 			for (Dword i = 0; i < header.height; ++i) {
 				// 从 img 数组拷贝 line_count 个字节
 				memcpy(w, r, line_count);
@@ -200,7 +200,14 @@ public:
 		delete[] buf;
 		return 0;
 	}
-
+	BytePicture to_pic() {
+		BytePicture pic(header.height, header.width);
+		for (Dword i = 0; i < pic.height(); i++)
+			for (Dword j = 0; j < pic.width(); j++)
+				std::fill(img.begin() + (i * pic.width() + j) * 3,
+					img.begin() + (i * pic.width() + j) * 3 + 3,
+					pic.data[i][j].begin());
+	}
 	Color get(Dword row, Dword col) const {
 		Dword idx = (row * header.width + col) * 3;
 		return Color {img[idx], img[idx + 1], img[idx + 2]};

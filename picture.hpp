@@ -15,5 +15,6 @@ template <typename T> struct BasePicture {
 };
 typedef BasePicture<Color> ColorPicture;
 typedef BasePicture<ColorExt> ColorExtPicture;
-typedef BasePicture<std::array<Float, 3>> BytePicture;
+typedef BasePicture<std::array<Byte, 3>> BytePicture;
+typedef std::vector<Dword> ColorMap;
 #endif
