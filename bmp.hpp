@@ -1,8 +1,8 @@
 #ifndef BMP_HPP
 #define BMP_HPP
 
-#include "bitmap.hpp"
 #include "global_define.hpp"
+#include "color.hpp"
 #include <cstdio>
 #include <cstring>
 #include <iostream>
