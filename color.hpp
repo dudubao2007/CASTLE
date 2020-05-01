@@ -11,14 +11,9 @@ struct Color {
 };
 class ColorExt {
 	Float _r, _g, _b, _a;
-	Byte F2B(Float x) {
-		if (x <= 0.0)
-			return 0;
-		if (x >= 1.0)
-			return 255;
-		return Byte(x * 256);
-	}
-	Float B2F(Byte x) { return x /static_cast<Float>(255.0); }
+	Float fit(Float x) { return (x < 0) ? 0.0 : ((x > 1) ? 1.0 : x); }
+	Byte F2B(Float x) { return Byte(fit(x) * 256); }
+	Float B2F(Byte x) { return x / static_cast<Float>(255.0); }
 
 public:
 	ColorExt() {}
@@ -27,22 +22,14 @@ public:
 		, _g(g)
 		, _b(b)
 		, _a(a) {
-		auto compress
-			= [](Float &x) { return x = (x < 0) ? 0.0 : ((x > 1) ? 1.0 : x); };
-		compress(_r);
-		compress(_g);
-		compress(_b);
-		compress(_a);
+		fit(_a), fit(_b), fit(_g), fit(_r);
 	}
 	ColorExt(Array<Float, 4> c)
-		: ColorExt(c[0],c[1],c[2],c[3]){
-		
-	}
+		: ColorExt(c[0], c[1], c[2], c[3]) {}
 	ColorExt(Array<Float, 3> c)
-		: ColorExt(c[0],c[1],c[2]){
-	}
+		: ColorExt(c[0], c[1], c[2]) {}
 	ColorExt(Color c)
-		: ColorExt(c.r,c.g,c.b){}
+		: ColorExt(c.r, c.g, c.b) {}
 	operator Color() { return Color(F2B(_r), F2B(_g), F2B(_b)); }
 	operator Array<Float, 4>() {
 		Array<Float, 4> ans;
