@@ -6,8 +6,7 @@
 #include <tuple>
 #include <vector>
 namespace Render {
-template <Dword _height, Dword _width>
-void render(BitMap<_height, _width> bitmap,
+void render(BitMap bitmap,
 	std::function<std::tuple<Byte, Byte, Byte>(Dword, Dword)> get_color,
 	Dword thread_num = 1) {
 	using namespace std;
@@ -28,6 +27,6 @@ void render(BitMap<_height, _width> bitmap,
 		thd_pool[i] = thread(f, i * p, i * p + p);
 	for (Dword i = 0; i < thread_num; ++i)
 		thd_pool[i].join();
-	f(thread_num * p, width);
+	f(thread_num * p, height);
 }
 } // namespace Render

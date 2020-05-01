@@ -1,13 +1,17 @@
 #ifndef BMP_HPP
 #define BMP_HPP
 
+#include "bitmap.hpp"
 #include "global_define.hpp"
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <vector>
+
+//一般来说，RGB色深总是24，没有预料过RGB色深不是24的情况
+//请注意
 
 class BMPFile {
-
 	// 一个 bmp 文件由 header, colormap (可选), img 三部分组成
 	const Dword header_size;
 	Dword colormap_size;
@@ -41,17 +45,20 @@ public:
 		Dword color_used;
 		Dword color_important;
 	} header;
-
-	BMPFile(Byte *img, Dword height, Dword width, Byte bpp = 24,
-		Dword *colormap = NULL)
+	/* BMPFile(BitMap bitmap, Byte bpp = 24,
+		Dword *colormap = nullptr) //委托构造函数
+		: BMPFile(bitmap.data, bitmap.height(), bitmap.width(), bpp, colormap) {
+	} */
+	BMPFile(Byte *_img, Dword height, Dword width, Byte bpp = 24,
+		Dword *_colormap = NULL)
 		: // bpp: bit per pixel
 		header_size(sizeof(header) + 2)
 		, colormap_size(colormap ? 1 << (bpp + 2) : 0)
 		, img_size((((bpp * width + 31) >> 5) << 2) * height)
 		, new_colormap(false)
 		, new_img(false)
-		, colormap(colormap)
-		, img(img) {
+		, colormap(nullptr)
+		, img(nullptr) {
 		// bmp header
 		header.file_size = header_size + colormap_size + img_size;
 		header.reserved1 = 0;
@@ -70,14 +77,20 @@ public:
 		header.resolutionY = 0;
 		header.color_used = 0;
 		header.color_important = 0;
+
+		// copy img&&colormap
+		colormap = new Dword[colormap_size];
+		img = new Byte[img_size];
+		memcpy(colormap, _colormap, sizeof(Dword) * colormap_size);
+		memcpy(img, _img, sizeof(Byte) * img_size);
 	}
 
 	BMPFile(const char *filename)
 		: header_size(sizeof(header) + 2)
 		, new_colormap(false)
 		, new_img(false)
-		, colormap(NULL)
-		, img(NULL) {
+		, colormap(nullptr)
+		, img(nullptr) {
 		FILE *fp = fopen(filename, "rb");
 		if (!fp) {
 			perror(filename);
