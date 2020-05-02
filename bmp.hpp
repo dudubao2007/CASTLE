@@ -55,12 +55,13 @@ public:
 		Dword color_used;
 		Dword color_important;
 	} header;
-	BMPFile(BytePicture pic, Byte bpp = 24,
+	BMPFile(const BytePicture &pic, Byte bpp = 24,
 		ColorMap _colormap = ColorMap()) //委托构造函数
 		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, colormap) {}
 
-	BMPFile(std::vector<Byte> _img, Dword height, Dword width, Byte bpp = 24,
-		ColorMap _colormap = ColorMap())
+	BMPFile(const std::vector<Byte> &_img, Dword height, Dword width,
+		Byte bpp = 24,
+		const ColorMap &_colormap = ColorMap())
 		: // bpp: bit per pixel
 		header_size(sizeof(header) + 2)
 		, colormap_size(colormap.size() ? 1 << (bpp + 2) : 0)
