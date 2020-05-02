@@ -56,15 +56,14 @@ public:
 		Dword color_important;
 	} header;
 	BMPFile(const BytePicture &pic, Byte bpp = 24,
-		ColorMap _colormap = ColorMap()) //委托构造函数
-		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, colormap) {}
+		const ColorMap &_colormap = ColorMap()) //委托构造函数
+		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, _colormap) {}
 
-	BMPFile(const std::vector<Byte> &_img, Dword height, Dword width,
-		Byte bpp = 24,
+	BMPFile(const Img &_img, Dword height, Dword width, Byte bpp = 24,
 		const ColorMap &_colormap = ColorMap())
 		: // bpp: bit per pixel
 		header_size(sizeof(header) + 2)
-		, colormap_size(colormap.size() ? 1 << (bpp + 2) : 0)
+		, colormap_size(_colormap.size() ? 1 << (bpp + 2) : 0)
 		, img_size((((bpp * width + 31) >> 5) << 2) * height)
 		, new_colormap(false)
 		, new_img(false)
@@ -158,13 +157,13 @@ public:
 
 	~BMPFile() {}
 
-	int output(const char *filename) const {
+	int output(const char *filename) {
 		FILE *fp = fopen(filename, "wb");
 		if (!fp) {
 			perror(filename);
 			return -1;
 		}
-
+		info();
 		Byte *buf = new Byte[header.file_size];
 		Byte *w = buf;
 
@@ -221,6 +220,23 @@ public:
 		img[idx] = color.r;
 		img[idx + 1] = color.g;
 		img[idx + 2] = color.b;
+	}
+	void info() {
+		std::cout << "file_size: " << header.file_size
+				  << "\nreserved1: " << header.reserved1
+				  << "\nreserved2: " << header.reserved2
+				  << "\noffbits: " << header.offbits
+				  << "\ninfo_size: " << header.info_size
+				  << "\nwidth: " << header.width
+				  << "\nheight: " << header.height
+				  << "\nplanes: " << header.planes
+				  << "\nbit_count: " << header.bit_count
+				  << "\ncompression: " << header.compression
+				  << "\nimg_size: " << header.img_size
+				  << "\nresolutionX: " << header.resolutionX
+				  << "\nresolutionY: " << header.resolutionY
+				  << "\ncolor_used: " << header.color_used
+				  << "\ncolor_important: " << header.color_important << "\n";
 	}
 };
 

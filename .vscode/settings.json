@@ -71,6 +71,7 @@
         "ostream": "cpp",
         "sstream": "cpp",
         "streambuf": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "charconv": "cpp"
     },
 }
