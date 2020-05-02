@@ -5,7 +5,7 @@
 #include <cassert>
 struct Color {
 	Byte r, g, b;
-	Color() {}
+	Color() { r = g = b = 0; }
 	Color(Byte r, Byte g, Byte b)
 		: r(r)
 		, g(g)
@@ -26,7 +26,7 @@ class ColorExt {
 	Float B2F(Byte x) { return x / static_cast<Float>(255.0); }
 
 public:
-	ColorExt() {}
+	ColorExt() { _r = _g = _b = _a = 0; }
 	ColorExt(Float r, Float g, Float b, Float a = 0)
 		: _r(r)
 		, _g(g)
