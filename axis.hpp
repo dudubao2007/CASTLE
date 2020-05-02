@@ -1,7 +1,7 @@
 #ifndef AXIS_HPP
 #define AXIS_HPP
-#include "array.hpp"
 #include "const.hpp"
+#include "coordinate.hpp"
 #include "global_define.hpp"
 #include <cmath>
 class Axis {
@@ -22,17 +22,11 @@ public:
 		else
 			eq_u = Const::NaN;
 	}
-	Coordinate to_point(Float x, Float y) {
-		Coordinate ans;
-		ans[0] = (x - x_c) / u_x;
-		ans[1] = (y - y_c) / u_y;
-		return ans;
+	Coordinate<Float> to_point(Float x, Float y) {
+		return Coordinate<Float>((x - x_c) / u_x, (y - y_c) / u_y);
 	}
-	Coordinate to_pixel(Float x, Float y) {
-		Coordinate ans;
-		ans[0] = x_c + x * u_x;
-		ans[1] = y_c + y * u_y;
-		return ans;
+	Coordinate<Float> to_pixel(Float x, Float y) {
+		return Coordinate<Float>(x_c + x * u_x, y_c + y * u_y);
 	}
 	Float x_unit() { return u_x; }
 	Float y_unit() { return u_y; }

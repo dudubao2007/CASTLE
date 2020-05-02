@@ -1,6 +1,5 @@
 #ifndef COLOR_HPP
 #define COLOR_HPP
-#include "array.hpp"
 #include "global_define.hpp"
 #include <array>
 #include <cassert>
