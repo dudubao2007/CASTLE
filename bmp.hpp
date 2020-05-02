@@ -30,6 +30,7 @@ class BMPFile {
 			for (Dword j = 0; j < pic.width(); j++)
 				std::copy(pic.data[i][j].begin(), pic.data[i][j].end(),
 					res.begin() + (i * pic.width() + j) * 3);
+		return res;
 	}
 
 public:
@@ -207,6 +208,7 @@ public:
 				std::copy(img.begin() + (i * pic.width() + j) * 3,
 					img.begin() + (i * pic.width() + j) * 3 + 3,
 					pic.data[i][j].begin());
+		return pic;
 	}
 	Color get(Dword row, Dword col) const {
 		Dword idx = (row * header.width + col) * 3;
