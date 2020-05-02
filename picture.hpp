@@ -10,11 +10,12 @@ template <typename T> struct BasePicture {
 		: data(
 			std::vector<std::vector<T>>(_height, std::vector<T>(_width, T()))) {
 	}
-	template <typename P> operator BasePicture<T>() {
-		BasePicture pic(height(), width());
+	template <typename P> operator BasePicture<P>() {
+		BasePicture<P> pic(height(), width());
 		for (Dword i = 0; i < height(); i++)
 			for (Dword j = 0; j < width(); j++)
-				pic[i][j] = data[i][j];
+				pic.data[i][j] = data[i][j];
+		return pic;
 	}
 	Dword height() { return data.size(); }
 	Dword width() { return (data.size() > 0 ? data.front().size() : 0); }

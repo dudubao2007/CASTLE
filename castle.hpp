@@ -2,8 +2,7 @@
 #include "bmp.hpp"
 #include "color.hpp"
 #include "const.hpp"
+#include "coordinate.hpp"
 #include "global_define.hpp"
 #include "picture.hpp"
 #include "render.hpp"
-#include "coordinate.hpp"
-

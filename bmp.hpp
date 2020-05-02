@@ -9,12 +9,12 @@
 #include <iostream>
 #include <vector>
 
-//ä¸€èˆ¬æ¥è¯´ï¼ŒRGBè‰²æ·±æ€»æ˜¯24ï¼Œæ²¡æœ‰é¢„æ–™è¿‡RGBè‰²æ·±ä¸æ˜¯24çš„æƒ…å†µ
-//è¯·æ³¨æ„
+//Ò»°ãÀ´Ëµ£¬RGBÉ«Éî×ÜÊÇ24£¬Ã»ÓĞÔ¤ÁÏ¹ıRGBÉ«Éî²»ÊÇ24µÄÇé¿ö
+//Çë×¢Òâ
 
 class BMPFile {
 	typedef std::vector<Byte> Img;
-	// ä¸€ä¸ª bmp æ–‡ä»¶ç”± header, colormap (å¯é€‰), img ä¸‰éƒ¨åˆ†ç»„æˆ
+	// Ò»¸ö bmp ÎÄ¼şÓÉ header, colormap (¿ÉÑ¡), img Èı²¿·Ö×é³É
 	const Dword header_size;
 	Dword colormap_size;
 	Dword img_size;
@@ -22,9 +22,9 @@ class BMPFile {
 	bool new_colormap;
 	bool new_img;
 
-	std::vector<Dword> colormap;
+	ColorMap colormap;
 	Img img;
-	Img to_img(BytePicture pic) {
+	Img pic2img(BytePicture &pic) {
 		Img res(pic.height() * pic.width() * 3);
 		for (Dword i = 0; i < pic.height(); i++)
 			for (Dword j = 0; j < pic.width(); j++)
@@ -36,7 +36,7 @@ class BMPFile {
 public:
 	struct {
 		// bmp header: 14 - 2 = 12 bytes
-		// Byte type[2]; å»æ‰è¿™ä¸€å­—æ®µ, æ–¹ä¾¿å­—èŠ‚å¯¹é½
+		// Byte type[2]; È¥µôÕâÒ»×Ö¶Î, ·½±ã×Ö½Ú¶ÔÆë
 		Dword file_size;
 		Word reserved1;
 		Word reserved2;
@@ -50,14 +50,14 @@ public:
 		Word bit_count;
 		Dword compression;
 		Dword img_size;
-		Dword resolutionX; // å•ä½: pixel/meter
+		Dword resolutionX; // µ¥Î»: pixel/meter
 		Dword resolutionY;
 		Dword color_used;
 		Dword color_important;
 	} header;
 	BMPFile(BytePicture pic, Byte bpp = 24,
-		ColorMap _colormap = ColorMap()) //å§”æ‰˜æ„é€ å‡½æ•°
-		: BMPFile(to_img(pic), pic.height(), pic.width(), bpp, colormap) {}
+		ColorMap _colormap = ColorMap()) //Î¯ÍĞ¹¹Ôìº¯Êı
+		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, colormap) {}
 
 	BMPFile(std::vector<Byte> _img, Dword height, Dword width, Byte bpp = 24,
 		ColorMap _colormap = ColorMap())
@@ -139,7 +139,7 @@ public:
 			new_img = true;
 			fread(img.data(), sizeof(Byte), img_size, fp);
 
-			// å°†æ•°æ®åœ¨å†…å­˜ä¸­ç§»åŠ¨, æ¶ˆé™¤ç©ºç™½å­—èŠ‚
+			// ½«Êı¾İÔÚÄÚ´æÖĞÒÆ¶¯, Ïû³ı¿Õ°××Ö½Ú
 			Byte bpp = header.bit_count;
 			Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
 			if (zero_count) {
@@ -187,11 +187,11 @@ public:
 			Dword line_count = header.width * (bpp >> 3);
 			Byte *r = const_cast<Byte *>(img.data());
 			for (Dword i = 0; i < header.height; ++i) {
-				// ä» img æ•°ç»„æ‹·è´ line_count ä¸ªå­—èŠ‚
+				// ´Ó img Êı×é¿½±´ line_count ¸ö×Ö½Ú
 				memcpy(w, r, line_count);
 				r += line_count;
 				w += line_count;
-				// ç”¨é›¶å¡«å…… zero_count ä¸ªå­—èŠ‚
+				// ÓÃÁãÌî³ä zero_count ¸ö×Ö½Ú
 				memset(w, 0, zero_count);
 				w += zero_count;
 			}
