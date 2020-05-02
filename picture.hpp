@@ -6,10 +6,9 @@
 #include <vector>
 template <typename T> struct BasePicture {
 	std::vector<std::vector<T>> data;
-	BasePicture<T>(Dword _height = 0, Dword _width = 0)
+	BasePicture<T>(Dword _height = 0, Dword _width = 0, T c = T())
 		: data(
-			std::vector<std::vector<T>>(_height, std::vector<T>(_width, T()))) {
-	}
+			std::vector<std::vector<T>>(_height, std::vector<T>(_width, c))) {}
 	template <typename P> operator BasePicture<P>() {
 		BasePicture<P> pic(height(), width());
 		for (Dword i = 0; i < height(); i++)
