@@ -2,6 +2,7 @@
 #define COLOR_HPP
 #include "array.hpp"
 #include "global_define.hpp"
+#include <array>
 #include <cassert>
 struct Color {
 	Byte r, g, b;
@@ -10,6 +11,7 @@ struct Color {
 		: r(r)
 		, g(g)
 		, b(b) {}
+
 	bool operator==(Color c) { return r == c.r && g == c.g && b == c.b; }
 };
 class ColorExt {
@@ -27,27 +29,23 @@ public:
 		, _a(a) {
 		fit(_a), fit(_b), fit(_g), fit(_r);
 	}
-	ColorExt(Array<Float, 4> c)
+	ColorExt(std::array<Float, 4> c)
 		: ColorExt(c[0], c[1], c[2], c[3]) {}
-	ColorExt(Array<Float, 3> c)
+	ColorExt(std::array<Float, 3> c)
 		: ColorExt(c[0], c[1], c[2]) {}
 	ColorExt(Color c)
-		: ColorExt(c.r, c.g, c.b) {}
+		: ColorExt(B2F(c.r), B2F(c.g), B2F(c.b)) {}
+	ColorExt(std::array<Byte, 3> c)
+		: ColorExt(B2F(c[0]), B2F(c[1]), B2F(c[2])) {}
 	operator Color() { return Color(F2B(_r), F2B(_g), F2B(_b)); }
-	operator Array<Float, 4>() {
-		Array<Float, 4> ans;
-		ans[0] = _r;
-		ans[1] = _g;
-		ans[2] = _b;
-		ans[3] = _a;
-		return ans;
+	operator std::array<Float, 4>() {
+		return std::array<Float, 4>({_r, _g, _b, _a});
 	}
-	operator Array<Float, 3>() {
-		Array<Float, 3> ans;
-		ans[0] = _r;
-		ans[1] = _g;
-		ans[2] = _b;
-		return ans;
+	operator std::array<Float, 3>() {
+		return std::array<Float, 3>({_r, _g, _b});
+	}
+	operator std::array<Byte, 3>() {
+		return std::array<Byte, 3>({F2B(_r), F2B(_g), F2B(_b)});
 	}
 	Float r() { return _r; }
 	Float g() { return _g; }
