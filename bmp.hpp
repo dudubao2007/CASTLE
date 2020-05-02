@@ -22,9 +22,9 @@ class BMPFile {
 	bool new_colormap;
 	bool new_img;
 
-	std::vector<Dword> colormap;
+	ColorMap colormap;
 	Img img;
-	Img to_img(BytePicture pic) {
+	Img pic2img(BytePicture &pic) {
 		Img res(pic.height() * pic.width() * 3);
 		for (Dword i = 0; i < pic.height(); i++)
 			for (Dword j = 0; j < pic.width(); j++)
@@ -57,7 +57,7 @@ public:
 	} header;
 	BMPFile(BytePicture pic, Byte bpp = 24,
 		ColorMap _colormap = ColorMap()) //委托构造函数
-		: BMPFile(to_img(pic), pic.height(), pic.width(), bpp, colormap) {}
+		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, colormap) {}
 
 	BMPFile(std::vector<Byte> _img, Dword height, Dword width, Byte bpp = 24,
 		ColorMap _colormap = ColorMap())
