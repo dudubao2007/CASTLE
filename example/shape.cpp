@@ -26,6 +26,7 @@ void render(ColorExtPicture &pic, Shape &shape, Float LineWidth,
 		for (Dword j = 0; j < width; ++j) {
 			Coordinate<Float> P(j, i);
 			Float sdf = shape.sdf(P);
+			// cout << sdf << endl;
 			if (-HalfLW <= sdf && sdf <= HalfLW) {
 				pic.data[i][j] = EdgeColor;
 			} else if (sdf < 0) {
@@ -35,7 +36,7 @@ void render(ColorExtPicture &pic, Shape &shape, Float LineWidth,
 }
 int main() {
 	CirclePixel Circle(500.0, 500.0, 100.0);
-	ColorExtPicture pic;
+	ColorExtPicture pic(1000, 1000);
 	render(pic, Circle, 5, ColorExt(0.0, 1.0, 0.0), ColorExt(1.0, 1.0, 1.0));
 	BytePicture BP(pic);
 	BMPFile f(BP);

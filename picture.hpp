@@ -17,8 +17,8 @@ template <typename T> struct BasePicture {
 				pic.data[i][j] = data[i][j];
 		return pic;
 	}
-	Dword height() { return data.size(); }
-	Dword width() { return (data.size() > 0 ? data.front().size() : 0); }
+	Dword height() const { return data.size(); }
+	Dword width() const { return (data.size() > 0 ? data.front().size() : 0); }
 };
 typedef BasePicture<Color> ColorPicture;
 typedef BasePicture<ColorExt> ColorExtPicture;

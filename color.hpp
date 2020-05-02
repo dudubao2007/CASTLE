@@ -16,7 +16,13 @@ struct Color {
 class ColorExt {
 	Float _r, _g, _b, _a;
 	Float fit(Float x) { return (x < 0) ? 0.0 : ((x > 1) ? 1.0 : x); }
-	Byte F2B(Float x) { return Byte(fit(x) * 256); }
+	Byte F2B(Float x) {
+		if (x <= 0.0)
+			return 0;
+		if (x >= 1.0)
+			return 255;
+		return Byte(x * 256);
+	}
 	Float B2F(Byte x) { return x / static_cast<Float>(255.0); }
 
 public:
