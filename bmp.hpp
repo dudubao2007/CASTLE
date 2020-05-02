@@ -28,7 +28,7 @@ class BMPFile {
 		Img res(pic.height() * pic.width() * 3);
 		for (Dword i = 0; i < pic.height(); i++)
 			for (Dword j = 0; j < pic.width(); j++)
-				std::fill(pic.data[i][j].begin(), pic.data[i][j].end(),
+				std::copy(pic.data[i][j].begin(), pic.data[i][j].end(),
 					res.begin() + (i * pic.width() + j) * 3);
 	}
 
@@ -204,7 +204,7 @@ public:
 		BytePicture pic(header.height, header.width);
 		for (Dword i = 0; i < pic.height(); i++)
 			for (Dword j = 0; j < pic.width(); j++)
-				std::fill(img.begin() + (i * pic.width() + j) * 3,
+				std::copy(img.begin() + (i * pic.width() + j) * 3,
 					img.begin() + (i * pic.width() + j) * 3 + 3,
 					pic.data[i][j].begin());
 	}
