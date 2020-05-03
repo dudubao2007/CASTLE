@@ -3,16 +3,13 @@
 
 #include "global_define.hpp"
 #include "picture.hpp"
-#include <cassert>
 #include <functional>
 #include <thread>
-#include <tuple>
 #include <vector>
 
 namespace Render {
-
-void render(BytePicture bitmap,
-	std::function<std::tuple<Byte, Byte, Byte>(Dword, Dword)> get_color,
+template <typename T>
+void render(BasePicture<T> &bitmap, std::function<T(Dword, Dword)> get_color,
 	Dword thread_num = 1) {
 
 	using namespace std;
@@ -25,10 +22,8 @@ void render(BytePicture bitmap,
 	auto f = [width, get_color, &bitmap](Dword begin, Dword end) {
 		for (Dword i = begin; i < end; ++i)
 			for (Dword j = 0; j < width; ++j) {
-				auto c = get_color(i, j);
-				bitmap.data[i][j][0] = get<0>(c);
-				bitmap.data[i][j][1] = get<1>(c);
-				bitmap.data[i][j][2] = get<2>(c);
+				T c = get_color(i, j);
+				bitmap.data[i][j] = c;
 			}
 	};
 
