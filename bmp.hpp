@@ -223,21 +223,23 @@ public:
 		img[idx + 2] = color.b;
 	}
 	void info() const {
-		std::cout << "file_size: " << header.file_size
-				  << "\nreserved1: " << header.reserved1
-				  << "\nreserved2: " << header.reserved2
-				  << "\noffbits: " << header.offbits
-				  << "\ninfo_size: " << header.info_size
-				  << "\nwidth: " << header.width
-				  << "\nheight: " << header.height
-				  << "\nplanes: " << header.planes
-				  << "\nbit_count: " << header.bit_count
-				  << "\ncompression: " << header.compression
-				  << "\nimg_size: " << header.img_size
-				  << "\nresolutionX: " << header.resolutionX
-				  << "\nresolutionY: " << header.resolutionY
-				  << "\ncolor_used: " << header.color_used
-				  << "\ncolor_important: " << header.color_important << "\n";
+		std::cout << "BMP information:"
+				  << "\n    file_size: " << header.file_size
+				  << "\n    reserved1: " << header.reserved1
+				  << "\n    reserved2: " << header.reserved2
+				  << "\n    offbits: " << header.offbits
+				  << "\n    info_size: " << header.info_size
+				  << "\n    width: " << header.width
+				  << "\n    height: " << header.height
+				  << "\n    planes: " << header.planes
+				  << "\n    bit_count: " << header.bit_count
+				  << "\n    compression: " << header.compression
+				  << "\n    img_size: " << header.img_size
+				  << "\n    resolutionX: " << header.resolutionX
+				  << "\n    resolutionY: " << header.resolutionY
+				  << "\n    color_used: " << header.color_used
+				  << "\n    color_important: " << header.color_important
+				  << "\n";
 	}
 };
 

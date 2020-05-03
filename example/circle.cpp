@@ -1,4 +1,5 @@
 #include "castle.hpp"
+#include "time_stamp.hpp"
 using namespace std;
 class CirclePixel {
 	Coordinate<Float> C;
@@ -40,13 +41,12 @@ void render_shape(ColorExtPicture &pic, const Shape &shape, ColorExt InColor,
 	render_shape(pic, shape, sdf_dealer, thread_num);
 }
 int main() {
-	clock_t start = clock();
+	TimeStamp _("Render");
 	ColorExtPicture pic(1000, 1000);
 	CirclePixel circle(500.0, 500.0, 200.0);
 	render_shape(
-		pic, circle, ColorExt(0.0, 1.0, 0.0), ColorExt(1.0, 1.0, 1.0), 5.0, 4);
+		pic, circle, ColorExt(0.0, 1.0, 0.0), ColorExt(1.0, 1.0, 1.0), 10.0, 4);
 	BMPFile bmp(pic);
 	bmp.output("circle.bmp");
-	printf("Time used:%lfs\n", (double)(clock() - start) / CLOCKS_PER_SEC);
 	return 0;
 }
