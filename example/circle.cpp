@@ -1,5 +1,4 @@
 #include "castle.hpp"
-#include <bits/stdc++.h>
 using namespace std;
 class CirclePixel {
 	Coordinate<Float> C;
@@ -45,9 +44,9 @@ int main() {
 	ColorExtPicture pic(1000, 1000);
 	CirclePixel circle(500.0, 500.0, 200.0);
 	render_shape(
-		pic, circle, ColorExt(0.0, 1.0, 0.0), ColorExt(1.0, 1.0, 1.0), 10.0, 4);
+		pic, circle, ColorExt(0.0, 1.0, 0.0), ColorExt(1.0, 1.0, 1.0), 5.0, 4);
 	BMPFile bmp(pic);
 	bmp.output("circle.bmp");
-	printf("Time used:%ld ms\n", clock() - start);
+	printf("Time used:%lfs\n", (double)(clock() - start) / CLOCKS_PER_SEC);
 	return 0;
 }
