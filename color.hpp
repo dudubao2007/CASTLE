@@ -8,7 +8,7 @@
 struct Color {
 	// red, green, blue
 	Byte r, g, b;
-  
+
 	Color()
 		: Color(0, 0, 0) {}
 	Color(Byte r, Byte g, Byte b)
@@ -17,11 +17,11 @@ struct Color {
 		, b(b) {}
 	Color(const std::array<Byte, 3> &c)
 		: Color(c[0], c[1], c[2]) {}
-  
+
 	operator std::array<Byte, 3>() const {
-    return std::array<Byte, 3>({r, g, b});
-  }
-  
+		return std::array<Byte, 3>({r, g, b});
+	}
+
 	bool operator==(const Color &c) const {
 		return r == c.r && g == c.g && b == c.b;
 	}
@@ -33,9 +33,7 @@ class ColorExt {
 	// _a == 0: 不透明, _a == 1: 完全透明
 	Float _r, _g, _b, _a;
 
-	static Float fit(Float x) {
-		return x < 0 ? 0.0 : (x > 1 ? 1.0 : x);
-	}
+	static Float fit(Float x) { return x < 0 ? 0.0 : (x > 1 ? 1.0 : x); }
 
 	static Byte F2B(Float x) {
 		if (x <= 0.0)

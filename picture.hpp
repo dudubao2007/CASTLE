@@ -11,11 +11,7 @@ template <typename T> struct BasePicture {
 	std::vector<std::vector<T>> data;
 
 	BasePicture(Dword height, Dword width const T &c = T())
-		: data(
-			std::vector<std::vector<T>>(
-				height, std::vector<T>(width, c)
-			)
-		) {}
+		: data(std::vector<std::vector<T>>(height, std::vector<T>(width, c))) {}
 
 	// 图片类型转换
 	template <typename P> operator BasePicture<P>() const {

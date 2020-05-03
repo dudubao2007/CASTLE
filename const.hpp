@@ -6,12 +6,12 @@
 #include <cmath>
 
 namespace Const {
-	const Float pi = std::acos((Float)-1.0);
-	const Float tau = 2.0 * pi;
-	const Float half_pi = 0.5 * pi;
-	const Float e = std::exp((Float)1.0);
-	const Float NaN = nan("");
-	const Float inf = 1.0 / 0.0;
+const Float pi = std::acos((Float)-1.0);
+const Float tau = 2.0 * pi;
+const Float half_pi = 0.5 * pi;
+const Float e = std::exp((Float)1.0);
+const Float NaN = nan("");
+const Float inf = 1.0 / 0.0;
 } // namespace Const
 
 namespace Func {
@@ -33,9 +33,8 @@ Float clip(Float t, Float a, Float b) {
 Float smooth(Float t) {
 	const Float inflection = 10.0;
 	Float error = sigmoid(-inflection * 0.5);
-	return clip(
-		(sigmoid(inflection * (t - 0.5)) - error) / (1.0 - 2.0 * error),
-	0.0, 1.0);
+	return clip((sigmoid(inflection * (t - 0.5)) - error) / (1.0 - 2.0 * error),
+		0.0, 1.0);
 }
 
 Float rush_into(Float t) { return 2.0 * smooth(t * 0.5); }

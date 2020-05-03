@@ -9,17 +9,19 @@
 template <typename T> struct Coordinate {
 	T x, y;
 
-	Coordinate(): x(), y() {} // 用 x,y 的默认构造函数来初始化
+	Coordinate()
+		: x()
+		, y() {} // 用 x,y 的默认构造函数来初始化
 
-	Coordinate(const T &x, const T &y) : x(x) , y(y) {}
+	Coordinate(const T &x, const T &y)
+		: x(x)
+		, y(y) {}
 
 	Coordinate(const std::complex<T> &C)
 		: x(C.real())
 		, y(C.imag()) {}
 
-	operator std::complex<T>() const {
-		return std::complex<T>(x, y);
-	}
+	operator std::complex<T>() const { return std::complex<T>(x, y); }
 
 	Coordinate<T> operator+(const Coordinate<T> &P) const {
 		return Coordinate<T>(x + P.x, y + P.y);
@@ -47,14 +49,12 @@ Coordinate<T> mid(const Coordinate<T> &P, const Coordinate<T> &Q) {
 }
 
 // 模; 到原点的距离
-template <typename T>
-T abs(const Coordinate<T> &P) {
+template <typename T> T abs(const Coordinate<T> &P) {
 	return abs(std::complex<T>(P));
 }
 
 // 辐角
-template <typename T>
-T arg(const Coordinate<T> &P) {
+template <typename T> T arg(const Coordinate<T> &P) {
 	return arg(std::complex<T>(P));
 }
 

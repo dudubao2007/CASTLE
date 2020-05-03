@@ -11,8 +11,7 @@
 
 namespace Render {
 
-void render(
-	BytePicture bitmap,
+void render(BytePicture bitmap,
 	std::function<std::tuple<Byte, Byte, Byte>(Dword, Dword)> get_color,
 	Dword thread_num = 1) {
 
@@ -36,7 +35,7 @@ void render(
 	// 将图片按行分成 thread_num 组, 各线程负责一组
 	Dword p = height / thread_num;
 	for (Dword i = 0; i < thread_num; ++i)
-		thd_pool[i] = thread(f, i * p, (i+1) * p);
+		thd_pool[i] = thread(f, i * p, (i + 1) * p);
 	for (Dword i = 0; i < thread_num; ++i)
 		thd_pool[i].join();
 	// 剩余的组在这里渲染
