@@ -22,8 +22,7 @@ void render(BasePicture<T> &bitmap, std::function<T(Dword, Dword)> get_color,
 	auto f = [width, get_color, &bitmap](Dword begin, Dword end) {
 		for (Dword i = begin; i < end; ++i)
 			for (Dword j = 0; j < width; ++j) {
-				T c = get_color(i, j);
-				bitmap.data[i][j] = c;
+				bitmap.data[i][j] = get_color(i, j);
 			}
 	};
 
