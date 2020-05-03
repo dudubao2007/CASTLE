@@ -12,19 +12,22 @@
 //一般来说，RGB色深总是24，没有预料过RGB色深不是24的情况
 //请注意
 
+// 用于读写 bmp 文件
 class BMPFile {
-	typedef std::vector<Byte> Img;
+
 	// 一个 bmp 文件由 header, colormap (可选), img 三部分组成
 	const Dword header_size;
 	Dword colormap_size;
 	Dword img_size;
 
-	bool new_colormap;
-	bool new_img;
-
+	// ColorMap 和 Img 均以 vector 实现, 标准库会为我们管理
+	// 拷贝 BMPFile 对象时的行为
+	typedef std::vector<Byte> Img;
+	typedef std::vector<Dword> ColorMap;
 	ColorMap colormap;
 	Img img;
-	Img pic2img(const BytePicture &pic) {
+
+	static Img pic2img(const BytePicture &pic) {
 		Img res(pic.height() * pic.width() * 3);
 		for (Dword i = 0; i < pic.height(); i++)
 			for (Dword j = 0; j < pic.width(); j++)
@@ -55,6 +58,7 @@ public:
 		Dword color_used;
 		Dword color_important;
 	} header;
+
 	BMPFile(const BytePicture &pic, Byte bpp = 24,
 		const ColorMap &_colormap = ColorMap()) //委托构造函数
 		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, _colormap) {}
@@ -65,8 +69,6 @@ public:
 		header_size(sizeof(header) + 2)
 		, colormap_size(_colormap.size() ? 1 << (bpp + 2) : 0)
 		, img_size((((bpp * width + 31) >> 5) << 2) * height)
-		, new_colormap(false)
-		, new_img(false)
 		, colormap(_colormap)
 		, img(_img) {
 		// bmp header
@@ -91,10 +93,9 @@ public:
 
 	BMPFile(const char *filename)
 		: header_size(sizeof(header) + 2)
-		, new_colormap(false)
-		, new_img(false)
 		, colormap(ColorMap())
 		, img(Img()) {
+		// windows 下读写二进制文件要加上选项 "b"
 		FILE *fp = fopen(filename, "rb");
 		if (!fp) {
 			perror(filename);
@@ -124,7 +125,6 @@ public:
 					<< "BMPfile: failed to allocate memory for colormap\n";
 				return;
 			}
-			new_colormap = true;
 			fread(colormap.data(), sizeof(Dword), count, fp);
 		}
 
@@ -136,7 +136,6 @@ public:
 				std::cerr << "BMPfile: failed to allocate memory for img\n";
 				return;
 			}
-			new_img = true;
 			fread(img.data(), sizeof(Byte), img_size, fp);
 
 			// 将数据在内存中移动, 消除空白字节
@@ -157,7 +156,7 @@ public:
 
 	~BMPFile() {}
 
-	int output(const char *filename) {
+	int output(const char *filename) const {
 		FILE *fp = fopen(filename, "wb");
 		if (!fp) {
 			perror(filename);
@@ -201,7 +200,8 @@ public:
 		delete[] buf;
 		return 0;
 	}
-	BytePicture to_pic() {
+
+	BytePicture to_pic() const {
 		BytePicture pic(header.height, header.width);
 		for (Dword i = 0; i < pic.height(); i++)
 			for (Dword j = 0; j < pic.width(); j++)
@@ -210,6 +210,7 @@ public:
 					pic.data[i][j].begin());
 		return pic;
 	}
+
 	Color get(Dword row, Dword col) const {
 		Dword idx = (row * header.width + col) * 3;
 		return Color {img[idx], img[idx + 1], img[idx + 2]};
@@ -221,7 +222,7 @@ public:
 		img[idx + 1] = color.g;
 		img[idx + 2] = color.b;
 	}
-	void info() {
+	void info() const {
 		std::cout << "file_size: " << header.file_size
 				  << "\nreserved1: " << header.reserved1
 				  << "\nreserved2: " << header.reserved2
