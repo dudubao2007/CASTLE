@@ -5,12 +5,15 @@
 #include <cassert>
 struct Color {
 	Byte r, g, b;
-	Color() { r = g = b = 0; }
+	Color()
+		: Color(0, 0, 0) {}
 	Color(Byte r, Byte g, Byte b)
 		: r(r)
 		, g(g)
 		, b(b) {}
-
+	Color(std::array<Byte, 3> c)
+		: Color(c[0], c[1], c[2]) {}
+	operator std::array<Byte, 3>() { return std::array<Byte, 3>({r, g, b}); }
 	bool operator==(Color c) { return r == c.r && g == c.g && b == c.b; }
 };
 class ColorExt {
@@ -52,11 +55,11 @@ public:
 	operator std::array<Byte, 3>() {
 		return std::array<Byte, 3>({F2B(_r), F2B(_g), F2B(_b)});
 	}
-	Float r() { return _r; }
-	Float g() { return _g; }
-	Float b() { return _b; }
-	Float a() { return _a; }
-	void compose(ColorExt c) {
+	Float r() const { return _r; }
+	Float g() const { return _g; }
+	Float b() const { return _b; }
+	Float a() const { return _a; }
+	void compose(const ColorExt &c) {
 		if (c.a() == 0) {
 			_r = c.r();
 			_g = c.g();
@@ -90,4 +93,5 @@ public:
 		_a = _a * c.a();
 	}
 };
+void compose(ColorExt &a, const ColorExt &b) { a.compose(b); }
 #endif
