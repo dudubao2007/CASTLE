@@ -8,11 +8,20 @@
 struct Color {
 	// red, green, blue
 	Byte r, g, b;
-
-	Color() { r = g = b = 0; }
-
-	Color(Byte r, Byte g, Byte b) : r(r) , g(g) , b(b) {}
-
+  
+	Color()
+		: Color(0, 0, 0) {}
+	Color(Byte r, Byte g, Byte b)
+		: r(r)
+		, g(g)
+		, b(b) {}
+	Color(const std::array<Byte, 3> &c)
+		: Color(c[0], c[1], c[2]) {}
+  
+	operator std::array<Byte, 3>() const {
+    return std::array<Byte, 3>({r, g, b});
+  }
+  
 	bool operator==(const Color &c) const {
 		return r == c.r && g == c.g && b == c.b;
 	}
@@ -109,5 +118,7 @@ public:
 		}
 	}
 };
+
+void compose(ColorExt &a, const ColorExt &b) { a.compose(b); }
 
 #endif
