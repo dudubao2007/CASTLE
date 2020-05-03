@@ -1,3 +1,6 @@
+#ifndef CASTLE_HPP
+#define CASTLE_HPP
+
 #include "axis.hpp"
 #include "bmp.hpp"
 #include "color.hpp"
@@ -6,3 +9,5 @@
 #include "global_define.hpp"
 #include "picture.hpp"
 #include "render.hpp"
+
+#endif
