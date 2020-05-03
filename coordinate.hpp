@@ -4,7 +4,7 @@
 #include "global_define.hpp"
 #include <cmath>
 #include <complex>
-
+namespace CASTLE {
 // 表示平面上的点 (或向量)
 template <typename T> struct Coordinate {
 	T x, y;
@@ -57,5 +57,5 @@ template <typename T> T abs(const Coordinate<T> &P) {
 template <typename T> T arg(const Coordinate<T> &P) {
 	return arg(std::complex<T>(P));
 }
-
+} // namespace CASTLE
 #endif

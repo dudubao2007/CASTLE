@@ -8,7 +8,7 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
-
+namespace CASTLE {
 //一般来说，RGB色深总是24，没有预料过RGB色深不是24的情况
 //请注意
 
@@ -242,5 +242,5 @@ public:
 				  << "\n";
 	}
 };
-
+} // namespace CASTLE
 #endif // BMP_HPP

@@ -5,7 +5,7 @@
 #include "global_define.hpp"
 #include <array>
 #include <vector>
-
+namespace CASTLE {
 // 图片类的通用模板
 template <typename T> struct BasePicture {
 	std::vector<std::vector<T>> data;
@@ -37,5 +37,5 @@ void compose(ColorExtPicture &a, const ColorExtPicture &b) {
 		for (Dword j = 0; j < a.width(); j++)
 			a.data[i][j].compose(b.data[i][j]);
 }
-
+} // namespace CASTLE
 #endif

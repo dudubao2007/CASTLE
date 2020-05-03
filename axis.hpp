@@ -4,6 +4,7 @@
 #include "coordinate.hpp"
 #include "global_define.hpp"
 #include <cmath>
+namespace CASTLE {
 class Axis {
 private:
 	Float x_c, y_c;
@@ -32,4 +33,5 @@ public:
 	Float y_unit() { return u_y; }
 	Float unit() { return eq_u; }
 };
+} // namespace CASTLE
 #endif

@@ -4,7 +4,7 @@
 #include "global_define.hpp"
 #include <array>
 #include <cassert>
-
+namespace CASTLE {
 struct Color {
 	// red, green, blue
 	Byte r, g, b;
@@ -118,5 +118,5 @@ public:
 };
 
 void compose(ColorExt &a, const ColorExt &b) { a.compose(b); }
-
+} // namespace CASTLE
 #endif

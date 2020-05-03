@@ -1,6 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+namespace CASTLE {
 //计时器
 //构造时启动，析构时停止并输出
 struct TimeStamp {
@@ -16,3 +17,4 @@ struct TimeStamp {
 				  << "ms" << std::endl;
 	}
 };
+} // namespace CASTLE

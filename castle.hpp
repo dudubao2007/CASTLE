@@ -9,6 +9,6 @@
 #include "global_define.hpp"
 #include "picture.hpp"
 #include "render.hpp"
+#include "shape.hpp"
 #include "time_stamp.hpp"
-
 #endif
