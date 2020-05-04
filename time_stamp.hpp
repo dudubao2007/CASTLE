@@ -1,3 +1,6 @@
+#ifndef TIME_STAMP_HPP
+#define TIME_STAMP_HPP
+
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -16,3 +19,5 @@ struct TimeStamp {
 				  << "ms" << std::endl;
 	}
 };
+
+#endif // TIME_STAMP_HPP
