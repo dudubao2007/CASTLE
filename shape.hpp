@@ -19,7 +19,7 @@ namespace Shape {
 
 	public:
 		virtual Float sdf(Coordinate<Float>) const = 0;
-		Coordinate<Float> coordinate() const { return c; }
+		Coordinate<Float> center() const { return c; }
 	};
 	class Circle : public Shape {
 		Float r;
@@ -34,7 +34,6 @@ namespace Shape {
 		Circle(Float cx, Float cy, Float r)
 			: Shape(cx, cy)
 			, r(r) {}
-		Coordinate<Float> center() const { return c + Coordinate<Float>(r, r); }
 		Float radius() const { return r; }
 		Float sdf(Coordinate<Float> p) const { return abs(p - center()) - r; }
 	};
@@ -61,8 +60,8 @@ namespace Shape {
 		BinaryOp(const Shape &x, const Shape &y)
 			: a(x)
 			, b(y) {
-			c = Coordinate<Float>(std::min(a.coordinate().x, b.coordinate().x),
-				std::min(a.coordinate().y, b.coordinate().y));
+			c = Coordinate<Float>((a.center().x + b.center().x) / 2,
+				(a.center().y + b.center().y) / 2);
 		}
 	};
 	class Union : public BinaryOp {
