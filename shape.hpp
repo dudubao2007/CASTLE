@@ -25,21 +25,28 @@ namespace Shape {
 		Point transform_center() const { return c; }
 	};
 	class CirclePixel : public Shape {
-		Float r;
+		Point c; // 圆心
+		Float r; // 半径
 
 	public:
 		CirclePixel()
 			: Shape()
+			, c()
 			, r() {}
 		CirclePixel(Point c, Float r)
 			: Shape(c)
+			, c(c)
 			, r(r) {}
 		CirclePixel(Float cx, Float cy, Float r)
 			: Shape(cx, cy)
+			, c(cx, cy)
 			, r(r) {}
 		Float radius() const { return r; }
-		Float sdf(const Point &p) const { return abs(p - center()) - r; }
+		Float sdf(const Point &p) const {
+			return abs(p - transform_center()) - r;
+		}
 	};
+	/*
 	class Rectangle : public Shape {
 		Float h, w;
 
@@ -56,6 +63,7 @@ namespace Shape {
 		Float width() const { return w; }
 		Float sdf(const Point &p) const {} //不会写
 	};
+	*/
 
 	class Line : public Shape {
 		Float a, b, c; // a x + b y + c = 0
@@ -157,8 +165,8 @@ namespace Shape {
 		BinaryOp(const Shape &x, const Shape &y)
 			: a(x)
 			, b(y) {
-			c = Point((a.center().x + b.center().x) / 2,
-				(a.center().y + b.center().y) / 2);
+			c = Point((a.transform_center().x + b.transform_center().x) / 2,
+				(a.transform_center().y + b.transform_center().y) / 2);
 		}
 	};
 	class Union : public BinaryOp {

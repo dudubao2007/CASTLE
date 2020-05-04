@@ -10,5 +10,6 @@
 #include "picture.hpp"
 #include "render.hpp"
 #include "time_stamp.hpp"
+#include "shape.hpp"
 
 #endif
