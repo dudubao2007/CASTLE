@@ -1,3 +1,6 @@
+#ifndef TIME_STAMP_HPP
+#define TIME_STAMP_HPP
+
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -18,3 +21,4 @@ struct TimeStamp {
 	}
 };
 } // namespace CASTLE
+#endif // TIME_STAMP_HPP
