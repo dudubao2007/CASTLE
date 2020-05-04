@@ -24,14 +24,18 @@ class Line {
 	Float a, b, c; // a x + b y + c = 0
 
 public:
-	Line(const Float &a, const Float &b, const Float &c):
-		a(a), b(b), c(c) {}
+	Line(const Float &a, const Float &b, const Float &c)
+		: a(a)
+		, b(b)
+		, c(c) {}
 
-	Line(const Point &p1, const Point &p2):
-		a(p2.y-p1.y), b(p1.x-p2.x), c(p2.x*p1.y-p1.x*p2.y) {}
+	Line(const Point &p1, const Point &p2)
+		: a(p2.y - p1.y)
+		, b(p1.x - p2.x)
+		, c(p2.x * p1.y - p1.x * p2.y) {}
 
 	Float sdf(const Point &P) const {
-		return abs(a * P.x + b * P.y + c)/hypot(a, b);
+		return abs(a * P.x + b * P.y + c) / hypot(a, b);
 	}
 };
 
@@ -39,7 +43,9 @@ class Segment {
 	Point p1, p2;
 
 public:
-	Segment(const Point &p1, const Point &p2): p1(p1), p2(p2) {}
+	Segment(const Point &p1, const Point &p2)
+		: p1(p1)
+		, p2(p2) {}
 
 	Float sdf(const Point &p) const {
 		Point edge = p1 - p2, r1 = p1 - p, r2 = p2 - p;
@@ -69,7 +75,7 @@ public:
 		// 求到每一边的最短距离
 		Float dist = Segment(vertices.front(), vertices.back()).sdf(P);
 		for (size_t i = 1; i < vertices.size(); ++i) {
-			Float tmp = Segment(vertices[i-1], vertices[i]).sdf(P);
+			Float tmp = Segment(vertices[i - 1], vertices[i]).sdf(P);
 			if (tmp < dist)
 				dist = tmp;
 		}
@@ -81,7 +87,7 @@ public:
 
 		Float winding_number = angle(radius.back(), radius.front());
 		for (size_t i = 1; i < vertices.size(); ++i) {
-			winding_number += angle(radius[i-1], radius[i]);
+			winding_number += angle(radius[i - 1], radius[i]);
 		}
 		winding_number /= Const::tau;
 		return int(round(winding_number)) % 2 == 0 ? dist : -dist;
@@ -114,9 +120,11 @@ void render_shape(ColorExtPicture &pic, const Shape &shape, ColorExt InColor,
 int main() {
 	TimeStamp _("Render");
 	ColorExtPicture pic(1000, 1000);
-	//Segment shape(Point(400, 400), Point(600, 600));
-	//Polygon shape({Point(400,400), Point(600,400), Point(600,600), Point(400,600)});
-	Polygon shape({Point(400, 400), Point(600, 600), Point(600, 800), Point(700, 700), Point(200, 700)});
+	// Segment shape(Point(400, 400), Point(600, 600));
+	// Polygon shape({Point(400,400), Point(600,400), Point(600,600),
+	// Point(400,600)});
+	Polygon shape({Point(400, 400), Point(600, 600), Point(600, 800),
+		Point(700, 700), Point(200, 700)});
 	render_shape(
 		pic, shape, ColorExt(0.0, 1.0, 0.0), ColorExt(1.0, 1.0, 1.0), 10.0, 4);
 	BMPFile bmp(pic);

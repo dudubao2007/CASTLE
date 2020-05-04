@@ -61,10 +61,9 @@ template <typename T> T arg(const Coordinate<T> &P) {
 // 夹角
 template <typename T> T angle(const Coordinate<T> &P, const Coordinate<T> &Q) {
 	T angle = atan2(Q.y, Q.x) - atan2(P.y, P.x);
-	return angle >= Const::pi ? angle - Const::tau
-		: angle <= -Const::pi ? angle + Const::tau
-		: angle;
+	return angle >= Const::pi
+		? angle - Const::tau
+		: angle <= -Const::pi ? angle + Const::tau : angle;
 }
-
 
 #endif
