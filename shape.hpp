@@ -25,19 +25,19 @@ namespace Shape {
 
 	public:
 		virtual Float sdf(const Point &) const = 0;
-		Point center() const { return c; }
+		Point transform_center() const { return c; }
 	};
-	class Circle : public Shape {
+	class CirclePixel : public Shape {
 		Float r;
 
 	public:
-		Circle()
+		CirclePixel()
 			: Shape()
 			, r() {}
-		Circle(Point c, Float r)
+		CirclePixel(Point c, Float r)
 			: Shape(c)
 			, r(r) {}
-		Circle(Float cx, Float cy, Float r)
+		CirclePixel(Float cx, Float cy, Float r)
 			: Shape(cx, cy)
 			, r(r) {}
 		Float radius() const { return r; }

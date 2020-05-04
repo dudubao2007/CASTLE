@@ -48,7 +48,7 @@ int main() {
 	ColorExtPicture pic(1000, 1000);
 	using namespace CASTLE::Shape;
 	using namespace CASTLE;
-	// Circle shape(Point(500, 500), 200);
+	// CirclePixel shape(Point(500, 500), 200);
 	// Segment shape(Point(400, 400), Point(600, 600));
 	// Polygon shape({Point(400,400), Point(600,400), Point(600,600),
 	// Point(400,600)});
