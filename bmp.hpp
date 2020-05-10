@@ -30,9 +30,11 @@ class BMPFile {
 	static Img pic2img(const BytePicture &pic) {
 		Img res(pic.height() * pic.width() * 3);
 		for (Dword i = 0; i < pic.height(); i++)
-			for (Dword j = 0; j < pic.width(); j++)
-				std::copy(pic.data[i][j].begin(), pic.data[i][j].end(),
-					res.begin() + (i * pic.width() + j) * 3);
+			for (Dword j = 0; j < pic.width(); j++) {
+				res[(i * pic.width() + j) * 3] = pic.data[i][j][2];
+				res[(i * pic.width() + j) * 3 + 1] = pic.data[i][j][1];
+				res[(i * pic.width() + j) * 3 + 2] = pic.data[i][j][0];
+			}
 		return res;
 	}
 
