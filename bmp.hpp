@@ -156,7 +156,22 @@ public:
 		fclose(fp);
 	}
 
-	~BMPFile() {}
+	~BMPFile() {
+		if (img) {
+			delete[] img;
+			img = NULL;
+		}
+	}
+
+	BMPFile(const BMPFile &f)
+		: header_size(f.header_size)
+		, colormap_size(f.colormap_size)
+		, img_size(f.img_size)
+		, colormap(f.colormap)
+		, img(new Byte[img_size])
+		, header(f.header) {
+		memcpy(img, f.img, sizeof(f.img));
+	}
 
 	int output(const char *filename) const {
 		FILE *fp = fopen(filename, "wb");
