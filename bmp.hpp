@@ -38,33 +38,6 @@ class BMPFile {
 		return res;
 	}
 
-public:
-	struct {
-		// bmp header: 14 - 2 = 12 bytes
-		// Byte type[2]; 去掉这一字段, 方便字节对齐
-		Dword file_size;
-		Word reserved1;
-		Word reserved2;
-		Dword offbits;
-
-		// info header: 40 bytes
-		Dword info_size;
-		Dword width;
-		Dword height;
-		Word planes;
-		Word bit_count;
-		Dword compression;
-		Dword img_size;
-		Dword resolutionX; // 单位: pixel/meter
-		Dword resolutionY;
-		Dword color_used;
-		Dword color_important;
-	} header;
-
-	BMPFile(const BytePicture &pic, Byte bpp = 24,
-		const ColorMap &_colormap = ColorMap()) //委托构造函数
-		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, _colormap) {}
-
 	BMPFile(Byte *_img, Dword height, Dword width, Byte bpp = 24,
 		const ColorMap &_colormap = ColorMap())
 		: // bpp: bit per pixel
@@ -92,6 +65,33 @@ public:
 		header.color_used = 0;
 		header.color_important = 0;
 	}
+
+public:
+	struct {
+		// bmp header: 14 - 2 = 12 bytes
+		// Byte type[2]; 去掉这一字段, 方便字节对齐
+		Dword file_size;
+		Word reserved1;
+		Word reserved2;
+		Dword offbits;
+
+		// info header: 40 bytes
+		Dword info_size;
+		Dword width;
+		Dword height;
+		Word planes;
+		Word bit_count;
+		Dword compression;
+		Dword img_size;
+		Dword resolutionX; // 单位: pixel/meter
+		Dword resolutionY;
+		Dword color_used;
+		Dword color_important;
+	} header;
+
+	BMPFile(const BytePicture &pic, Byte bpp = 24,
+		const ColorMap &_colormap = ColorMap()) //委托构造函数
+		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, _colormap) {}
 
 	BMPFile(const char *filename)
 		: header_size(sizeof(header) + 2)
