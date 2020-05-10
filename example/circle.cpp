@@ -48,12 +48,12 @@ int main() {
 	ColorExtPicture pic(1000, 1000);
 	using namespace CASTLE::Shape;
 	using namespace CASTLE;
-	// CirclePixel shape(Point(500, 500), 200);
+	CirclePixel shape(Point(500, 500), 200);
 	// Segment shape(Point(400, 400), Point(600, 600));
 	// Polygon shape({Point(400,400), Point(600,400), Point(600,600),
 	// Point(400,600)});
-	Polygon shape({Point(400, 400), Point(600, 600), Point(600, 800),
-		Point(700, 700), Point(200, 700)});
+	// Polygon shape({Point(400, 400), Point(600, 600), Point(600, 800),
+	// Point(700, 700), Point(200, 700)});
 	render_shape(
 		pic, shape, ColorExt(0.0, 1.0, 0.0), ColorExt(1.0, 1.0, 1.0), 10.0, 4);
 	BMPFile bmp(pic);
