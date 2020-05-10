@@ -43,7 +43,7 @@ namespace Shape {
 			, r(r) {}
 		Float radius() const { return r; }
 		Float sdf(const Point &p) const {
-			return abs(p - transform_center()) - r;
+			return abs(p - c) - r;
 		}
 	};
 	/*
@@ -108,18 +108,26 @@ namespace Shape {
 		enum PolygonMode { ALL_INSIDE, ALL_OUTSIDE, EVEN_ODD, NON_ZERO };
 		PolygonMode mode;
 
+		static Point get_center(const std::vector<Point> &v) {
+			if (v.empty())
+				std::cerr << "a polygon must have at least one vertex\n";
+			Point p(0,0);
+			for (size_t i = 0; i < v.size(); ++i) {
+				p = p + v[i];
+			}
+			return p / v.size();
+		}
+
 	public:
 		Polygon(const std::vector<Point> &v)
-			: vertices(v)
+			: Shape(get_center(v))
+			, vertices(v)
 			, mode(EVEN_ODD) {}
 
 		Polygon(const std::initializer_list<Point> &l)
-			: vertices(l)
-			, mode(EVEN_ODD) {}
+			: Polygon(std::vector<Point>(l)) {}
 
 		Float sdf(const Point &P) const {
-			if (vertices.empty())
-				std::cerr << "a polygon must have at least one vertex\n";
 			if (vertices.size() == 1)
 				return abs(vertices.front() - P);
 
