@@ -20,20 +20,20 @@ class BMPFile {
 	Dword colormap_size;
 	Dword img_size;
 
-	// ColorMap 和 Img 均以 vector 实现, 标准库会为我们管理
-	// 拷贝 BMPFile 对象时的行为
-	typedef std::vector<Byte> Img;
+	// colorMap 以 vector 实现,
+	// 为了更高效, img 以动态数组实现
 	typedef std::vector<Dword> ColorMap;
 	ColorMap colormap;
-	Img img;
+	Byte *img;
 
-	static Img pic2img(const BytePicture &pic) {
-		Img res(pic.height() * pic.width() * 3);
+	static Byte *pic2img(const BytePicture &pic) {
+		Byte *res = new Byte[pic.height() * pic.width() * 3];
+		Dword pos = 0;
 		for (Dword i = 0; i < pic.height(); i++)
 			for (Dword j = 0; j < pic.width(); j++) {
-				res[(i * pic.width() + j) * 3] = pic.data[i][j][2];
-				res[(i * pic.width() + j) * 3 + 1] = pic.data[i][j][1];
-				res[(i * pic.width() + j) * 3 + 2] = pic.data[i][j][0];
+				res[pos++] = pic.data[i][j][2];
+				res[pos++] = pic.data[i][j][1];
+				res[pos++] = pic.data[i][j][0];
 			}
 		return res;
 	}
@@ -65,7 +65,7 @@ public:
 		const ColorMap &_colormap = ColorMap()) //委托构造函数
 		: BMPFile(pic2img(pic), pic.height(), pic.width(), bpp, _colormap) {}
 
-	BMPFile(const Img &_img, Dword height, Dword width, Byte bpp = 24,
+	BMPFile(Byte *_img, Dword height, Dword width, Byte bpp = 24,
 		const ColorMap &_colormap = ColorMap())
 		: // bpp: bit per pixel
 		header_size(sizeof(header) + 2)
@@ -96,7 +96,7 @@ public:
 	BMPFile(const char *filename)
 		: header_size(sizeof(header) + 2)
 		, colormap(ColorMap())
-		, img(Img()) {
+		, img(NULL) {
 		// windows 下读写二进制文件要加上选项 "b"
 		FILE *fp = fopen(filename, "rb");
 		if (!fp) {
@@ -133,12 +133,12 @@ public:
 		// img
 		if (img_size) {
 			try {
-				img.resize(img_size);
+				img = new Byte[img_size];
 			} catch (...) {
 				std::cerr << "BMPfile: failed to allocate memory for img\n";
 				return;
 			}
-			fread(img.data(), sizeof(Byte), img_size, fp);
+			fread(img, sizeof(Byte), img_size, fp);
 
 			// 将数据在内存中移动, 消除空白字节
 			Byte bpp = header.bit_count;
@@ -146,10 +146,10 @@ public:
 			if (zero_count) {
 				Dword line_count = header.width * (bpp >> 3);
 				Dword count = line_count + zero_count;
-				for (Byte *r = img.data() + count, *w = img.data() + line_count;
-					 r < img.data() + img_size; r += count, w += line_count) {
+				const Byte *r = img + count;
+				Byte *w = img + line_count;
+				for (; r < img + img_size; r += count, w += line_count)
 					memmove(w, r, line_count);
-				}
 			}
 		}
 
@@ -183,10 +183,10 @@ public:
 		}
 
 		// img
-		if (img.size()) {
+		if (img) {
 			Dword zero_count = (4 - (((bpp >> 3) * header.width) & 3)) & 3;
 			Dword line_count = header.width * (bpp >> 3);
-			Byte *r = const_cast<Byte *>(img.data());
+			const Byte *r = img;
 			for (Dword i = 0; i < header.height; ++i) {
 				// 从 img 数组拷贝 line_count 个字节
 				memcpy(w, r, line_count);
@@ -205,25 +205,28 @@ public:
 
 	BytePicture to_pic() const {
 		BytePicture pic(header.height, header.width);
+		Dword pos = 0;
 		for (Dword i = 0; i < pic.height(); i++)
-			for (Dword j = 0; j < pic.width(); j++)
-				std::copy(img.begin() + (i * pic.width() + j) * 3,
-					img.begin() + (i * pic.width() + j) * 3 + 3,
-					pic.data[i][j].begin());
+			for (Dword j = 0; j < pic.width(); j++) {
+				pic.data[i][j][2] = img[pos++];
+				pic.data[i][j][1] = img[pos++];
+				pic.data[i][j][0] = img[pos++];
+			}
 		return pic;
 	}
 
 	Color get(Dword row, Dword col) const {
 		Dword idx = (row * header.width + col) * 3;
-		return Color {img[idx], img[idx + 1], img[idx + 2]};
+		return Color {img[idx + 2], img[idx + 1], img[idx]};
 	}
 
 	void set(Dword row, Dword col, const Color &color) {
 		Dword idx = (row * header.width + col) * 3;
-		img[idx] = color.r;
+		img[idx + 2] = color.r;
 		img[idx + 1] = color.g;
-		img[idx + 2] = color.b;
+		img[idx] = color.b;
 	}
+
 	void info() const {
 		std::cout << "BMP information:"
 				  << "\n    file_size: " << header.file_size
