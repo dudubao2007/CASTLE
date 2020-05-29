@@ -4,6 +4,6 @@
 typedef unsigned char Byte;
 typedef unsigned short Word;
 typedef unsigned int Dword;
-typedef float Float;
+typedef double Float;
 
 #endif
