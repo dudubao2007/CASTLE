@@ -57,6 +57,7 @@ template <typename T> T abs(const Coordinate<T> &P) {
 template <typename T> T arg(const Coordinate<T> &P) {
 	return arg(std::complex<T>(P));
 }
+typedef Coordinate<Float> Point;
 
 // 夹角
 template <typename T> T angle(const Coordinate<T> &P, const Coordinate<T> &Q) {
