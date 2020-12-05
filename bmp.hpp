@@ -38,6 +38,7 @@ class BMPFile {
 		return res;
 	}
 
+public:
 	BMPFile(Byte *_img, Dword height, Dword width, Byte bpp = 24,
 		const ColorMap &_colormap = ColorMap())
 		: // bpp: bit per pixel
@@ -66,7 +67,6 @@ class BMPFile {
 		header.color_important = 0;
 	}
 
-public:
 	struct {
 		// bmp header: 14 - 2 = 12 bytes
 		// Byte type[2]; 去掉这一字段, 方便字节对齐
