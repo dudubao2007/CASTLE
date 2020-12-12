@@ -42,9 +42,7 @@ namespace Shape {
 			, c(cx, cy)
 			, r(r) {}
 		Float radius() const { return r; }
-		Float sdf(const Point &p) const {
-			return abs(p - c) - r;
-		}
+		Float sdf(const Point &p) const { return abs(p - c) - r; }
 	};
 	/*
 	class Rectangle : public Shape {
@@ -111,7 +109,7 @@ namespace Shape {
 		static Point get_center(const std::vector<Point> &v) {
 			if (v.empty())
 				std::cerr << "a polygon must have at least one vertex\n";
-			Point p(0,0);
+			Point p(0, 0);
 			for (size_t i = 0; i < v.size(); ++i) {
 				p = p + v[i];
 			}

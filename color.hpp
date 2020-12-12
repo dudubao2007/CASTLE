@@ -122,7 +122,7 @@ void compose(ColorExt &a, const ColorExt &b) { a.compose(b); }
 
 class ColorHSV {
 	Float _h, _s, _v, _a;
-	static Float fit(Float x) { return x < 0 ? 0.0 : (x > 1 ? 1.0 : x); }
+	static Float fit(Float x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
 
 public:
 	ColorHSV() { _h = _s = _v = _a = 0; }
@@ -134,13 +134,13 @@ public:
 		, _a(fit(a)) {}
 
 	operator ColorExt() {
-		const Float cst = Const::pi / 3.0;
+		const Float cst = Const::pi / 3;
 		int hi = _h / cst;
 		Float f, p, q, t;
 		f = _h / cst - hi;
-		p = _v * (1.0 - _s);
-		q = _v * (1.0 - f * _s);
-		t = _v * (1.0 - (1.0 - f) * _s);
+		p = _v * (1 - _s);
+		q = _v * (1 - f * _s);
+		t = _v * (1 - (1 - f) * _s);
 		switch (hi) {
 		case 0:
 			return ColorExt(_v, t, p);
@@ -161,7 +161,7 @@ public:
 ColorHSV::ColorHSV(const ColorExt &c) {
 	Float r = c.r(), g = c.g(), b = c.b();
 	Float cmin, delta;
-	const Float cst = Const::pi / 3.0;
+	const Float cst = Const::pi / 3;
 	char vc, mc;
 	if (r > g) {
 		if (g > b)
@@ -207,12 +207,12 @@ ColorHSV::ColorHSV(const ColorExt &c) {
 			if (mc == 'b')
 				_h = cst * ((g - b) / delta);
 			else
-				_h = cst * ((g - b) / delta + 6.0);
+				_h = cst * ((g - b) / delta + 6);
 		case 'g':
-			_h = cst * ((b - r) / delta + 2.0);
+			_h = cst * ((b - r) / delta + 2);
 			break;
 		case 'b':
-			_h = cst * ((r - g) / delta + 4.0);
+			_h = cst * ((r - g) / delta + 4);
 			break;
 		}
 	}

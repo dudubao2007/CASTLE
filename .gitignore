@@ -207,4 +207,10 @@ $RECYCLE.BIN/
 *.vob
 *.wmv
 
+# logs
+*.log
+
+# Text files
+*.txt
+
 # End of https://www.gitignore.io/api/c++,linux,macos,windows,visualstudiocode
