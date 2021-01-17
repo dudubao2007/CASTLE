@@ -16,7 +16,7 @@ inline Color renderer(Dword i, Dword j) {
 }
 void output_video() {
 	system("ffmpeg -y -r 25 -f rawvideo -pix_fmt rgb24 -s 1920x1080 -i "
-		   "\\\\.\\Pipe\\cmplx -f mp4 -s 1920x1080 cmplx_rgb.mp4 "
+		   "\\\\.\\Pipe\\cmplx -f mp4 -pix_fmt yuv420p -s 1920x1080 cmplx.mp4 "
 		   "2>ffmpeg_cmplx.log");
 }
 PictureFixed<1080, 1920> pic;
@@ -39,7 +39,5 @@ int main() {
 	DisconnectNamedPipe(hPipe);
 	CloseHandle(hPipe);
 	ffmpeg.join();
-	system("ffmpeg -y -i cmplx_rgb.mp4 -f mp4 -pix_fmt yuv420p cmplx.mp4 "
-		   "2>>ffmpeg_cmplx.log");
 	return 0;
 }

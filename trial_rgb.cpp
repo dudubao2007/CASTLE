@@ -15,8 +15,7 @@ void output_video() {
 int main() {
 	HANDLE hPipe = CreateNamedPipe("\\\\.\\Pipe\\MyPipe", PIPE_ACCESS_DUPLEX,
 		PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
-		PIPE_UNLIMITED_INSTANCES, 0, 0, NMPWAIT_WAIT_FOREVER,
-		0);
+		PIPE_UNLIMITED_INSTANCES, 0, 0, NMPWAIT_WAIT_FOREVER, 0);
 	cout << "Connecting..." << endl;
 	thread ffmpeg(output_video);
 	if (ConnectNamedPipe(hPipe, NULL) == TRUE) {

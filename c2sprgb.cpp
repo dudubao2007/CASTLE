@@ -1,6 +1,5 @@
 #pragma GCC optimize(2)
 #include "bmp_old.h"
-#include <assert.h>
 #include <thread>
 #include <windows.h>
 using namespace std;
@@ -91,7 +90,7 @@ COLOR get_color() {
 
 void output_video() {
 	system(
-		"ffmpeg -y -f rawvideo -pix_fmt bgr24 -s 1500x1500 -i "
+		"ffmpeg -y -f rawvideo -pix_fmt rgb24 -s 1500x1500 -i "
 		"\\\\.\\Pipe\\MyPipe -f mp4 -pix_fmt yuv420p -s 1500x1500 c2sp.mp4 2>ffmpeg_c2sp.log");
 }
 

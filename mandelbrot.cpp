@@ -84,27 +84,20 @@ void process(int thread_num = 1) {
 	for (int i = 0; i < thread_num; i++)
 		thd_pool[i].join();
 }
-bool connected = 0;
 void output_video() {
-	while (1) {
-		Sleep(200);
-		if (connected)
-			break;
-		system("ffmpeg -y -r 25 -f rawvideo -pix_fmt rgb24 -s 1280x720 -i "
-			   "\\\\.\\Pipe\\MyPipe -f mp4 -s 1280x720 mandelbrot.mp4 "
-			   "2>ffmpeg_mandelbrot.log");
-	}
+	system("ffmpeg -y -r 25 -f rawvideo -pix_fmt rgb24 -s 1280x720 -i "
+		   "\\\\.\\Pipe\\MyPipe -f mp4 -pix_fmt yuv420p -s 1280x720 "
+		   "mandelbrotrgb.mp4 2>ffmpeg_mandelbrot.log");
 }
 int main() {
 	init_color();
 	HANDLE hPipe = CreateNamedPipe("\\\\.\\Pipe\\MyPipe", PIPE_ACCESS_DUPLEX,
 		PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
 		PIPE_UNLIMITED_INSTANCES, 0, 0, NMPWAIT_WAIT_FOREVER,
-		0); //创建了一个命名管道
+		0);
 
 	thread ffmpeg(output_video);
 	if (ConnectNamedPipe(hPipe, NULL) == TRUE) {
-		connected = 1;
 		cout << "Connected!" << endl;
 	}
 

@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <iostream>
 typedef unsigned char uc;
 typedef unsigned short us;
 typedef unsigned int uint;
@@ -14,7 +14,7 @@ void write_bits(uc *begin, uc *end, uint num) {
 	}
 }
 uint write_bmp(uc *res, uint Height, uint Width, uc bpp, uc *BitMap,
-	uint *ColorMap = NULL) {
+	uint *ColorMap = 0) {
 	// FILEHEADER
 	uc *ptr1 = res;
 	write_bits(ptr1, ptr1 + 1, 'B');
@@ -73,7 +73,7 @@ uint write_bmp(uc *res, uint Height, uint Width, uc bpp, uc *BitMap,
 	return Size;
 }
 int output_bmp(const char *filename, uc *bmp_str, uint size) {
-	FILE *fp = fopen(filename, "wb");
+ 	FILE *fp = fopen(filename, "wb");
 	if (!fp)
 		return -1;
 	fwrite(bmp_str, sizeof(uc), size, fp);
